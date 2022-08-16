@@ -14,7 +14,12 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    packages=setuptools.find_packages(),
+    packages=['hwlib_keywords', 'hwlib'],
+    package_dir={
+        'hwlib': 'hwlib',
+        'hwlib_keywords': 'hwlib_keywords',
+    },
+    # package_data={},
     python_requires=">=3.8",
     entry_points={
         'console_scripts': ['handoutgen=handoutgen.command_line:call'], }
