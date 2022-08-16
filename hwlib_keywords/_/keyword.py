@@ -8,7 +8,8 @@ class Keyword:
 
     def __init__(self, func):
         self._func = func
-        self._qname = f"hwlib_keywords.{func.__name__}"
+        self._name = func.__qualname__
+        self._qname = f"hwlib_keywords.{self._name}"
         self._bool = True
         Keyword.registered.append(self)
 

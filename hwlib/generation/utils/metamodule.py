@@ -31,7 +31,7 @@ class MetaModule:
     task_funcs: Sequence[FunctionDef]
     istask: bool
 
-    def __init__(self, fpath: Path, project_dir: Path):
+    def __init__(self, fpath: Path, project_dir: Path = None):
         self.path = fpath
         self.proj_dir = project_dir
 
@@ -42,6 +42,7 @@ class MetaModule:
 
     @cached_property
     def path_rel2proj(self):
+        assert self.proj_dir
         return self.path.relative_to(self.proj_dir)
 
     @cached_property

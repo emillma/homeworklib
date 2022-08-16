@@ -89,5 +89,11 @@ class NameReplacer(CSTTransformer):
         self.repl = repl.value if m.matches(repl, m.Name()) else repl
 
     def leave_Name(self, _: Name, upd_name: Name) -> "Name":
-        newval = re.sub(self.pattern, self.repl, upd_name.value)
-        return upd_name.with_changes(value=newval)
+        if m.matches(upd_name, m.Name()):
+            newval = re.sub(self.pattern, self.repl, upd_name.value)
+            if newval:
+                return upd_name.with_changes(value=newval)
+            else:
+                return RemovalSentinel.REMOVE
+        else:
+            return upd_name.visit(self)

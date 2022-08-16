@@ -35,7 +35,8 @@ class ImportSoluUsage(MetaTransformer):
                      ) -> Module:
         idx = next((i for i, n in enumerate(updated_node.body)
                    if not m.findall(n, m.Import() | m.ImportFrom())), 0)
-        newline = parse_statement(f'from solution.solu_vars import solu_usage')
+        text = f'from solution.solu_usage_checker import UsageChecker'
+        newline = parse_statement(text)
         newbody = [*updated_node.body[:idx], newline, *updated_node.body[idx:]]
         return updated_node.with_changes(body=newbody)
 
@@ -44,8 +45,8 @@ class MarkSoluUsage(MetaTransformer):
     def leave_FunctionDef(self, orig_def: FunctionDef, upd_def: FunctionDef
                           ) -> FunctionDef:
         if orig_def in self.task_funcs:
-            string = f"solu_usage['{self.id_str(orig_def)}'] = True"
-            s = parse_statement(string)
+            text = f"UsageChecker.increase_usage('{self.id_str(orig_def)}')"
+            s = parse_statement(text)
             indet = upd_def.body.with_changes(body=[s, *upd_def.body.body])
             upd_def = upd_def.with_changes(body=indet)
         return upd_def

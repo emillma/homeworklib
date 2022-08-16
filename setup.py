@@ -19,8 +19,9 @@ setuptools.setup(
         'hwlib': 'hwlib',
         'hwlib_keywords': 'hwlib_keywords',
     },
+    include_package_data=True,
     # package_data={},
     python_requires=">=3.8",
     entry_points={
-        'console_scripts': ['handoutgen=handoutgen.command_line:call'], }
+        'console_scripts': ['hwlib_generate=hwlib.entry:call'], }
 )

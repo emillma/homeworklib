@@ -50,8 +50,8 @@ class HyperTraverser(CSTTransformer):
                             RemovalSentinel,
                             FlattenSentinel[CSTNodeT]]:
         for traverser in self.traversers:
-            if isinstance(traverser, MetaVisitor):
+            if isinstance(traverser, CSTVisitor):
                 traverser.on_leave(original_node)
-            if isinstance(traverser, MetaTransformer):
+            if isinstance(traverser, CSTTransformer):
                 updated_node = traverser.on_leave(original_node, updated_node)
         return updated_node

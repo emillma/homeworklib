@@ -8,7 +8,7 @@ sys.path.insert(0, str(project_dir.joinpath(CODEDIRSTR)))  # nopep8
 
 from compare import compare
 import MODULEFULL as MODULE
-from solution.solu_vars import solu_usage
+from solution.solu_usage_checker import UsageChecker
 
 
 class TESTCLASS:
@@ -42,10 +42,12 @@ class TESTCLASS:
 
     def test_solution_usage(self, test_data):
         """Tests if the solution is used in the function"""
-        for kwargs, ret_s in test_data[FUNC_ID]:
-            solu_usage[FUNC_ID] = False
+        func_id = FUNC_ID
+        for kwargs, ret_s in test_data[func_id]:
+            UsageChecker.reset_usage(func_id, PASSWORD)
             MODULE.FUNCTION(**kwargs)
-            assert not solu_usage[FUNC_ID], "The function uses the solution"
+            msg = "The function uses the solution"
+            assert not UsageChecker.reset_usage(func_id), msg
 
 
 if __name__ == "__main__":

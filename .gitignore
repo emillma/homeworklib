@@ -1,7 +1,8 @@
 !.gitkeep
 
-*.pickle
 __pycache__/
+build/
+*.pickle
 *.egg-info
 
 /output

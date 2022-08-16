@@ -1,7 +1,8 @@
 import autopep8
 from typing import Sequence
+from random import randint
 
-from ..utils import MetaModule, HyperTraverser, MetaTraverser
+from ..utils import MetaModule, HyperTraverser, MetaTraverser, NameReplacer
 from .tran_solu import RedirectImports, ImportSoluUsage, MarkSoluUsage
 from .tran_task import ImportSolution, CodeRemover, SolutionBeforeReturnAdder
 from .tran_test import ImportNameReplacer, TestFuncsCreator
@@ -35,9 +36,22 @@ forsolution = (*forall,
                REPLACEReplacer.ishomework(False),
                TOASSIGNReplacer.ishomework(False)
                )
+
+password = ''.join([chr(randint(97, 123)) for i in range(6)])
+
+forusagechecker = (lambda **_: NameReplacer('PASSWORD', 'None'),)
+forgradeusagechecker = (lambda **_: NameReplacer('PASSWORD', password),)
+
 fortests = (
     ImportNameReplacer,
     TestFuncsCreator,
+    lambda **_: NameReplacer('PASSWORD', 'None'),
+)
+
+forgradetests = (
+    ImportNameReplacer,
+    TestFuncsCreator,
+    lambda **_: NameReplacer('PASSWORD', password),
 )
 
 

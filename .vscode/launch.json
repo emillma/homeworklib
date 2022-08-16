@@ -5,27 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CUDA C++: Launch",
-            "type": "cuda-gdb",
-            "request": "launch",
-            "preLaunchTask": "${defaultBuildTask}",
-            "program": "${workspaceFolder}/build/hello"
-        },
-        {
-            "name": "Python: Current File",
+            "name": "Python: test_handoutgen",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-        },
-        {
-            "name": "Python: handoutgen",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/Handoutgen/handoutgen/command_line.py",
+            "program": "${workspaceFolder}/hwlib/entry.py",
             "args": [
-                "handouttesting",
-                "--runfile=handouttesting/mystuff/run.py",
+                "testproject",
+                "testproject/mystuff/run.py",
+                "output",
             ],
             "console": "integratedTerminal",
             // "justMyCode": false
@@ -40,14 +27,6 @@
             },
             "console": "integratedTerminal",
             // "justMyCode": false
-        },
-        {
-            "name": "Python: Ins",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/ins/run.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
         },
     ]
 }
