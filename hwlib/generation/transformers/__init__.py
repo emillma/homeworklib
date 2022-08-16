@@ -1,5 +1,5 @@
-from compositions import (process_composition,
-                          forhandout, fortasks, forsolution, forlf, fortests)
+from .compositions import (process_composition,
+                           forhandout, fortasks, forsolution, forlf, fortests)
 
 
 def get_handout(module) -> str:

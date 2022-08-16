@@ -6,43 +6,57 @@ import re
 
 from .transformers import get_handout, get_task, get_lf, get_solu, get_test
 from .checkers import pre_check_mmodule
-from .utils import MetaModule
+from .utils import MetaModule, NameReplacer
 
 
 class HWGenerator:
-    def __init__(self, module, runfile, handouts_dir):
-        self.proj_dir = Path(module).resolve()
-        self.runfile = Path(runfile).resolve()
-        self.code_dir = self.proj_dir.joinpath(
-            self.runfile.relative_to(self.proj_dir).parts[0])
+    def __init__(self, proj_dir: Path, runfile: Path,
+                 output_dir: Path, template_dir: Path):
+        self.proj_dir = proj_dir
+        self.runfile = runfile
+        self.template_dir = template_dir
+        proj2run = self.runfile.relative_to(self.proj_dir)
+        self.code_dir = self.proj_dir.joinpath(proj2run.parts[0])
 
-        self.template_dir = Path(__file__).parents[1].joinpath('templates')
-        handouts_dir = Path(handouts_dir).resolve()
-        self.out_proj_dir = handouts_dir.joinpath(self.proj_dir.name)
-        self.out_test_dir = self.out_proj_dir.joinpath('tests')
+        self.tmp_test_data = output_dir.joinpath('tmptestdata.pickle')
+
+        self.out_proj_dir = output_dir.joinpath(self.proj_dir.name)
         self.out_code_dir = self.out_proj_dir.joinpath(self.code_dir.name)
         self.out_solu_dir = self.out_code_dir.joinpath('solution')
-        self.out_test_data = self.out_test_dir.joinpath('data/testdata.pickle')
+        self.out_test_dir = self.out_proj_dir.joinpath('tests')
 
-        self.lf_proj_dir = handouts_dir.joinpath('LF_'+self.proj_dir.name)
+        self.lf_proj_dir = output_dir.joinpath('LF_'+self.proj_dir.name)
         self.lf_code_dir = self.lf_proj_dir.joinpath(self.code_dir.name)
+        self.lf_solu_dir = self.lf_code_dir.joinpath('solution')
         self.lf_test_dir = self.lf_proj_dir.joinpath('tests')
 
         self.modules = [MetaModule(fp, self.proj_dir)
                         for fp in self.code_dir.rglob('*.py')]
         self.task_modules = [m for m in self.modules if m.istask]
 
-        template_dir = Path(__file__).parents[1].joinpath('templates')
         self.testtemplate = MetaModule(
-            template_dir.joinpath('testfile.py'), None)
+            self.template_dir.joinpath('testfile.py'))
+        self.solu_checker = MetaModule(
+            self.template_dir.joinpath('solu_usage_checker.py'))
 
         self.data_process: Optional[PIPE] = None
 
     def call(self):
-        self.create_folder_structure()
         self.start_data_collection()
+        self.create_handout()
+        self.create_lf()
+        self.wait_for_data_collection()
+        for dir in (self.out_test_dir, self.lf_test_dir):
+            copy(self.tmp_test_data, dir.joinpath('data/testdata.pickle'))
+        self.tmp_test_data.unlink()
+
+    def create_handout(self):
+        self.create_folder_structure()
         self.copy_files()
         self.modify_files()
+        solucheck = self.solu_checker.visit(NameReplacer('PASSWORD', 'None'))
+
+        self.out_solu_dir.joinpath('solu_usage_checker.py').write_text()
         for module in self.modules:
             pre_check_mmodule(module)
 
@@ -57,13 +71,11 @@ class HWGenerator:
                 tname = f"test_{module.path.name}"
                 self.out_test_dir.joinpath(tname).write_text(test)
 
+    def create_lf(self):
         copytree(self.out_proj_dir, self.lf_proj_dir)
         for module in self.modules:
             lf = get_lf(module)
             self.lf_code_dir.joinpath(module.path_rel2code).write_text(lf)
-
-        self.wait_for_data_collection()
-        copy(self.out_test_data, self.lf_test_dir.joinpath('data'))
 
     def create_folder_structure(self):
         if self.out_proj_dir.is_dir():
@@ -109,9 +121,9 @@ class HWGenerator:
 
         from_template('compare.py', self.out_test_dir)
         from_template('conftest.py', self.out_test_dir)
-        from_template('solu_vars.py', self.out_solu_dir)
-        from_template('.devcontainer', self.out_proj_dir)
-        from_template('.vscode', self.out_proj_dir)
+        from_template('vscode', self.out_proj_dir.joinpath('.vscode'))
+        from_template('devcontainer',
+                      self.out_proj_dir.joinpath('.devcontainer'))
 
     def start_data_collection(self):
         datafile = self.out_test_dir.joinpath('data/testdata.pickle')
