@@ -1,0 +1,42 @@
+{
+    // "image": "devcontainer:latest",
+    "image": "devcontainer:latest",
+    "forwardPorts": [
+        3000,
+        8050
+    ],
+    "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode-remote.remote-ssh",
+        "kevinrose.vsc-python-indent",
+        "editorconfig.editorconfig",
+        "nvidia.nsight-vscode-edition",
+        "mhutchie.git-graph",
+        "znck.grammarly",
+        "james-yu.latex-workshop",
+    ],
+    "name": "mycontainer",
+    "runArgs": [
+        // "--net=host",
+        // "--gpus=all",
+        // "--privileged",
+        // "--device=/dev/spidev0.0",
+        // "--net=host",
+        // "--runtime=nvidia",
+        // "--ipc=host",
+        // "-e DISPLAY=172.27.160.1:0.0",
+        // "--device=/dev/ttyUSB0",
+    ],
+    "remoteEnv": {
+        "DISPLAY": "172.31.160.1:0.0"
+    },
+    // "mounts": [
+    //     "type=volume,src=sensorrig,dst=/volumes/sensorrig"
+    // ],
+    // "workspaceFolder": "/workspace",
+    // "workspaceMount": "source=sensorrig-ws,target=/workspace,type=volume",
+}

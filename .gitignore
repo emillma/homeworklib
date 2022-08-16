@@ -1,0 +1,8 @@
+!.gitkeep
+
+*.pickle
+__pycache__/
+*.egg-info
+
+/output
+/testproject

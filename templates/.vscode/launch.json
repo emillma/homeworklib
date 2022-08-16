@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+        },
+        // {
+        //     "name": "Python: run homework",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/$homework_module/run.py",
+        //     "console": "integratedTerminal"
+        // },
+        // {
+        //     "name": "Python: generate handin zip",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/generate_handin.py",
+        //     "console": "integratedTerminal"
+        // },
+        {
+            "name": "Debug Tests",
+            "type": "python",
+            "request": "test",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "_PYTEST_RAISE": "1"
+            }
+        }
+    ]
+}
