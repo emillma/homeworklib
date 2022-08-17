@@ -7,18 +7,8 @@ handin_dir = project_dir.joinpath('handin')
 code_dir_str = 'CODEDIR'
 
 
-def rel2project(path: Path) -> Path:
-    return path.relative_to(project_dir)
-
-
-def rel2handin(path: Path) -> Path:
-    return handin_dir.joinpath(rel2project(path))
-
-
-def should_include(path: Path):
-    relative_str = str(rel2project(path).as_posix())
-    if not path.is_file():
-        return False
+def should_include(relative_path: Path):
+    relative_str = str(relative_path.as_posix())
     if not re.fullmatch(r'.*\.py', relative_str):
         return False
     if not re.fullmatch(f'{code_dir_str}/.*', relative_str):
@@ -28,16 +18,17 @@ def should_include(path: Path):
     return True
 
 
-def main():
+def create_handin():
     rmtree(str(handin_dir), ignore_errors=True)
     handin_dir.mkdir()
 
-    for path in project_dir.rglob('*'):
-        if should_include(path):
-            newpath = rel2handin(path)
+    for file in (f for f in project_dir.rglob('*') if f.is_file()):
+        rel2project = file.relative_to(project_dir)
+        if should_include(rel2project):
+            newpath = handin_dir.joinpath(file)
             newpath.parent.mkdir(parents=True, exist_ok=True)
-            copy(str(path), str(newpath))
+            copy(str(file), str(newpath))
 
 
 if __name__ == '__main__':
-    main()
+    create_handin()

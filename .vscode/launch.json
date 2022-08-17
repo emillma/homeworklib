@@ -8,11 +8,23 @@
             "name": "Python: test_handoutgen",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/hwlib/entry.py",
+            "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
                 "testproject",
                 "testproject/mystuff/run.py",
                 "output",
+            ],
+            "console": "integratedTerminal",
+            // "justMyCode": false
+        },
+        {
+            "name": "Python: test_grader",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/hwlib/grade.py",
+            "args": [
+                "output/deliveries",
+                "output/GR_testproject",
             ],
             "console": "integratedTerminal",
             // "justMyCode": false

@@ -1,6 +1,7 @@
 from pathlib import Path
 import argparse
-from hwlib.generation.hw_generator import HWGenerator
+from hwlib.generation import HWGenerator
+from hwlib.grading import HWGrader
 import hwlib
 
 
@@ -23,5 +24,16 @@ def generate_homework():
     HWGenerator(module_dir, runfile, output_dir, template_dir).call()
 
 
-if __name__ == '__main__':
-    generate_homework()
+def grade_homework():
+    parser = argparse.ArgumentParser(description='Grade homework')
+    parser.add_argument('handins_dir')
+    parser.add_argument('grader_dir')
+    args = parser.parse_args()
+
+    handins_dir = Path(args.handins_dir).resolve()
+    grader_dir = Path(args.grader_dir).resolve()
+
+    assert handins_dir.is_dir()
+    assert grader_dir.is_dir()
+
+    HWGrader(handins_dir, grader_dir).call()

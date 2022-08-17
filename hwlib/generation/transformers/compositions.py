@@ -2,7 +2,7 @@ import autopep8
 from typing import Sequence
 from random import randint
 
-from ..utils import MetaModule, HyperTraverser, MetaTraverser, NameReplacer
+from ..utils import MetaModule, HyperTraverser, MetaTraverser
 from .tran_solu import RedirectImports, ImportSoluUsage, MarkSoluUsage
 from .tran_task import ImportSolution, CodeRemover, SolutionBeforeReturnAdder
 from .tran_test import ImportNameReplacer, TestFuncsCreator, PASSWORDReplacer
@@ -28,33 +28,29 @@ general = (ImportRemover,
            KEEPReplacer,
            EXITIFCOLLECTINGRemover,
            )
-solu = (*general,
-        RedirectImports,
-        ImportSoluUsage,
-        REPLACEReplacer.ishomework(False),
-        TOASSIGNReplacer.ishomework(False)
+ho_sup = (*general,
+          REPLACEReplacer.ishomework(True),
+          TOASSIGNReplacer.ishomework(True)
+          )
+ho__task = (*ho_sup,
+            ImportSolution,
+            CodeRemover,
+            SolutionBeforeReturnAdder,
+            )
+ho__solu = (*general,
+            RedirectImports,
+            ImportSoluUsage,
+            MarkSoluUsage,
+            REPLACEReplacer.ishomework(False),
+            TOASSIGNReplacer.ishomework(False),
+            )
 
-        )
-
-out_sup = (*general,
-           REPLACEReplacer.ishomework(True),
-           TOASSIGNReplacer.ishomework(True)
-           )
-out__task = (*out_sup,
-             ImportSolution,
-             CodeRemover,
-             SolutionBeforeReturnAdder,
+ho__tests = (ImportNameReplacer,
+             TestFuncsCreator,
+             PASSWORDReplacer.with_password(None),
              )
-out__solu = (*solu,
-             MarkSoluUsage.with_password(None),
+ho__check = (PASSWORDReplacer.with_password(None),
              )
-
-out__tests = (ImportNameReplacer,
-              TestFuncsCreator,
-              PASSWORDReplacer.with_password(None),
-              )
-out__check = (PASSWORDReplacer.with_password(None),
-              )
 
 
 lf__sup_task = (*general,
@@ -68,30 +64,28 @@ gr__tests = (
     TestFuncsCreator,
     PASSWORDReplacer.with_password(PASSWORD)
 )
-gr__solu = (*solu,
-            MarkSoluUsage.with_password(PASSWORD),
-            )
+gr__solu = ho__solu
 gr__check = (PASSWORDReplacer.with_password(PASSWORD),)
 
 
-def get_out_sup(module) -> str:
-    return process_composition(module, out_sup)
+def get_ho_sup(module) -> str:
+    return process_composition(module, ho_sup)
 
 
-def get_out_task(module) -> str:
-    return process_composition(module, out__task)
+def get_ho_task(module) -> str:
+    return process_composition(module, ho__task)
 
 
-def get_out_solu(module) -> str:
-    return process_composition(module, out__solu)
+def get_ho_solu(module) -> str:
+    return process_composition(module, ho__solu)
 
 
-def get_out_usage_checker(module) -> str:
-    return process_composition(module, out__check)
+def get_ho_usage_checker(module) -> str:
+    return process_composition(module, ho__check)
 
 
-def get_out_test(module, template) -> str:
-    return process_composition(module, out__tests, template, test=template)
+def get_ho_test(module, template) -> str:
+    return process_composition(module, ho__tests, template, test=template)
 
 
 def get_lf_sup_task(module) -> str:

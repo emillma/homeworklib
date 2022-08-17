@@ -1,9 +1,9 @@
 from pathlib import Path
 from re import escape
 from tqdm import tqdm
-from grading_utils import (get_student_name_dict, prepare_folder,
-                           cleanup_tmp_stuff, get_junitxml, parse_junit_xml,
-                           create_csv)
+from hwlib.grading.grading_utils import (get_student_name_dict, prepare_folder,
+                                         cleanup_tmp_stuff, get_junitxml, parse_junit_xml,
+                                         create_csv)
 assignment_name = 'Assignment5_pda'
 code_folder_name = 'pda'
 

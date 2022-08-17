@@ -5,7 +5,6 @@ from libcst import (Name, FunctionDef, Attribute, ImportFrom, Import, Module,
                     parse_statement)
 
 from ..utils import MetaTransformer
-from .differs import Passworddiffer
 
 
 class RedirectImports(MetaTransformer):
@@ -42,14 +41,12 @@ class ImportSoluUsage(MetaTransformer):
         return updated_node.with_changes(body=newbody)
 
 
-class MarkSoluUsage(MetaTransformer, Passworddiffer):
+class MarkSoluUsage(MetaTransformer):
     def leave_FunctionDef(self, orig_def: FunctionDef, upd_def: FunctionDef
                           ) -> FunctionDef:
         if orig_def in self.task_funcs:
             key = self.id_str(orig_def)
-            if isinstance(self.password, str):
-                self.password = f"'{self.password}'"
-            text = f"UsageChecker.increase_usage('{key}', {self.password})"
+            text = f"UsageChecker.increase_usage('{key}')"
             s = parse_statement(text)
             indet = upd_def.body.with_changes(body=[s, *upd_def.body.body])
             upd_def = upd_def.with_changes(body=indet)
