@@ -47,7 +47,7 @@ class TESTCLASS:
             UsageChecker.reset_usage(func_id, PASSWORD)
             MODULE.FUNCTION(**kwargs)
             msg = "The function uses the solution"
-            assert not UsageChecker.reset_usage(func_id), msg
+            assert not UsageChecker.is_used(func_id), msg
 
 
 if __name__ == "__main__":

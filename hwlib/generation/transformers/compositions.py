@@ -5,54 +5,10 @@ from random import randint
 from ..utils import MetaModule, HyperTraverser, MetaTraverser, NameReplacer
 from .tran_solu import RedirectImports, ImportSoluUsage, MarkSoluUsage
 from .tran_task import ImportSolution, CodeRemover, SolutionBeforeReturnAdder
-from .tran_test import ImportNameReplacer, TestFuncsCreator
+from .tran_test import ImportNameReplacer, TestFuncsCreator, PASSWORDReplacer
 from .tran_both import (ImportRemover, DecoratorRemover,
                         KEEPReplacer, REPLACEReplacer,
                         TOASSIGNReplacer, EXITIFCOLLECTINGRemover)
-
-
-forall = (ImportRemover,
-          DecoratorRemover,
-          KEEPReplacer,
-          EXITIFCOLLECTINGRemover,
-          )
-forhandout = (*forall,
-              REPLACEReplacer.ishomework(True),
-              TOASSIGNReplacer.ishomework(True)
-              )
-forlf = (*forall,
-         REPLACEReplacer.ishomework(False),
-         TOASSIGNReplacer.ishomework(False)
-         )
-fortasks = (*forhandout,
-            ImportSolution,
-            CodeRemover,
-            SolutionBeforeReturnAdder,
-            )
-forsolution = (*forall,
-               RedirectImports,
-               ImportSoluUsage,
-               MarkSoluUsage,
-               REPLACEReplacer.ishomework(False),
-               TOASSIGNReplacer.ishomework(False)
-               )
-
-password = ''.join([chr(randint(97, 123)) for i in range(6)])
-
-forusagechecker = (lambda **_: NameReplacer('PASSWORD', 'None'),)
-forgradeusagechecker = (lambda **_: NameReplacer('PASSWORD', password),)
-
-fortests = (
-    ImportNameReplacer,
-    TestFuncsCreator,
-    lambda **_: NameReplacer('PASSWORD', 'None'),
-)
-
-forgradetests = (
-    ImportNameReplacer,
-    TestFuncsCreator,
-    lambda **_: NameReplacer('PASSWORD', password),
-)
 
 
 def process_composition(module: MetaModule, traversers: Sequence[MetaTraverser],
@@ -63,3 +19,87 @@ def process_composition(module: MetaModule, traversers: Sequence[MetaTraverser],
         traversers
     ), module=module, **kwargs))
     return autopep8.fix_code(output.code)
+
+
+PASSWORD = ''.join([chr(randint(97, 122)) for i in range(6)])
+
+general = (ImportRemover,
+           DecoratorRemover,
+           KEEPReplacer,
+           EXITIFCOLLECTINGRemover,
+           )
+out_sup = (*general,
+           REPLACEReplacer.ishomework(True),
+           TOASSIGNReplacer.ishomework(True)
+           )
+out__task = (*out_sup,
+             ImportSolution,
+             CodeRemover,
+             SolutionBeforeReturnAdder,
+             )
+out__solu = (*general,
+             RedirectImports,
+             ImportSoluUsage,
+             MarkSoluUsage,
+             REPLACEReplacer.ishomework(False),
+             TOASSIGNReplacer.ishomework(False)
+             )
+out__tests = (ImportNameReplacer,
+              TestFuncsCreator,
+              PASSWORDReplacer.with_password(None),
+              )
+out__check = (PASSWORDReplacer.with_password(None),
+              )
+
+
+lf__sup_task = (*general,
+                REPLACEReplacer.ishomework(False),
+                TOASSIGNReplacer.ishomework(False)
+                )
+
+
+gr__tests = (
+    ImportNameReplacer,
+    TestFuncsCreator,
+    PASSWORDReplacer.with_password(PASSWORD)
+)
+gr__solu = (*out__solu,
+            PASSWORDReplacer.with_password(PASSWORD)
+            )
+gr__check = (PASSWORDReplacer.with_password(PASSWORD),)
+
+
+def get_out_sup(module) -> str:
+    return process_composition(module, out_sup)
+
+
+def get_out_task(module) -> str:
+    return process_composition(module, out__task)
+
+
+def get_out_solu(module) -> str:
+    return process_composition(module, out__solu)
+
+
+def get_out_usage_checker(module) -> str:
+    return process_composition(module, out__check)
+
+
+def get_out_test(module, template) -> str:
+    return process_composition(module, out__tests, template, test=template)
+
+
+def get_lf_sup_task(module) -> str:
+    return process_composition(module, lf__sup_task)
+
+
+def get_grader_solu(module) -> str:
+    return process_composition(module, gr__solu)
+
+
+def get_grader_test(module, template) -> str:
+    return process_composition(module, gr__tests, template, test=template)
+
+
+def get_grader_usage_checker(module) -> str:
+    return process_composition(module, gr__check)

@@ -4,7 +4,7 @@ from libcst import matchers as m
 from libcst import (Name, FunctionDef, Attribute, ImportFrom, Import, Module,
                     parse_statement)
 
-from ..utils import MetaTransformer
+from ..utils import MetaTransformer, MetaModule
 
 
 class RedirectImports(MetaTransformer):

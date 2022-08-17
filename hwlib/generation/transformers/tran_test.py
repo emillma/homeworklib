@@ -28,10 +28,6 @@ class ImportNameReplacer(TestTransformer):
             return Name(self.path.stem)
         if matches('MODULEFULL'):
             return parse_expression(self.module_str)
-        elif matches('ASNAME'):
-            return Name(self.path.stem)
-        elif matches('ASNAMESOLU'):
-            return Name(f'{self.path.stem}_solu')
         elif matches('CODEDIRSTR'):
             return SimpleString(f"'{self.path_rel2proj.parts[0]}'")
         else:
@@ -105,6 +101,8 @@ class TestFuncsCreator(TestTransformer):
 
     @staticmethod
     def assert_repl(key, names, names_s):
+        """replaces the assert compare(name, name_s)"""
+
         class AssertCompare(CSTTransformer):
             def leave_Assert(self, orig_assert: Assert, upd_assert: Assert
                              ) -> Union[Assert, FlattenSentinel[Assert],
@@ -125,3 +123,24 @@ class TestFuncsCreator(TestTransformer):
                                            for (arg, arg_s) in iterator])
                 return upd
         return AssertCompare()
+
+
+class PASSWORDReplacer(MetaTransformer):
+    password = str
+
+    def leave_Name(self, _: Name, upd_name: Name) -> "Name":
+        if m.matches(upd_name, m.Name('PASSWORD')):
+            if isinstance(self.password, str):
+                upd_name = SimpleString(f"'{self.password}'")
+            else:
+                return Name('None')
+        return upd_name
+
+    @classmethod
+    def with_password(cls: "PASSWORDReplacer", password: str
+                      ) -> "PASSWORDReplacer":
+        def factry(module: PASSWORDReplacer, **_) -> PASSWORDReplacer:
+            obj: PASSWORDReplacer = cls(module)
+            obj.password = password
+            return obj
+        return factry
