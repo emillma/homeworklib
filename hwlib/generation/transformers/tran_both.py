@@ -5,9 +5,10 @@ from libcst import (ImportFrom, Name, BaseSmallStatement, BaseStatement,
                     SimpleStatementLine, Call, Import, FlattenSentinel,
                     RemovalSentinel, If, Decorator, Call, BaseExpression)
 
-from hwlib_keywords import KEEP, REPLACE, TOASSIGN
+from hwlib.keywords import KEEP, REPLACE, TOASSIGN
 from ..utils import (add_leading_lines, add_comment,
                      NoneAssigner, MetaTransformer, MetaModule)
+from .differs import HomeworkDiffer
 
 
 class DecoratorRemover(MetaTransformer):
@@ -21,13 +22,11 @@ class DecoratorRemover(MetaTransformer):
 
 
 class ImportRemover(MetaTransformer):
-    name = 'hwlib_keywords'
+    name = 'hwlib'
 
     def leave_Import(self, original_node: "Import", updated_node: "Import"
                      ) -> Union["BaseSmallStatement", RemovalSentinel]:
-        if any(m.matches(n, m.Name(self.name)
-                         | m.ImportAlias(m.Name(self.name)))
-                for n in original_node.names):
+        if m.findall(original_node, m.Name(self.name)):
             return RemovalSentinel.REMOVE
         else:
             return updated_node
@@ -35,7 +34,7 @@ class ImportRemover(MetaTransformer):
     def leave_ImportFrom(self, original_node: "ImportFrom",
                          updated_node: "ImportFrom"
                          ) -> Union["BaseSmallStatement", RemovalSentinel]:
-        if m.matches(original_node.module, m.Name(self.name)):
+        if m.findall(original_node, m.Name(self.name)):
             return RemovalSentinel.REMOVE
         else:
             return updated_node
@@ -64,18 +63,6 @@ class EXITIFCOLLECTINGRemover(MetaTransformer):
         if m.findall(original_node, Name('EXITIFCOLLECTING')):
             return RemovalSentinel.REMOVE
         return updated_node
-
-
-class HomeworkDiffer:
-    homework: bool
-
-    @classmethod
-    def ishomework(cls, homework: bool):
-        def factry(module: MetaTransformer) -> MetaTransformer:
-            obj: HomeworkDiffer = cls(module)
-            obj.homework = homework
-            return obj
-        return factry
 
 
 class TOASSIGNReplacer(MetaTransformer, HomeworkDiffer):

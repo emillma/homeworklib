@@ -14,10 +14,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    packages=['hwlib_keywords', 'hwlib'],
+    packages=['hwlib.keywords', 'hwlib'],
     package_dir={
         'hwlib': 'hwlib',
-        'hwlib_keywords': 'hwlib_keywords',
+        'hwlib.keywords': 'hwlib.keywords',
     },
     include_package_data=True,
     # package_data={},

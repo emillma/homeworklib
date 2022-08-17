@@ -82,7 +82,7 @@ class MetaModule:
         if not self.istask:
             return []
         mchr = m.FunctionDef(decorators=[
-            m.AtLeastN(self.qname_matcher_prov('hwlib_keywords.HOMEWORK'), n=1)])
+            m.AtLeastN(self.qname_matcher_prov('hwlib.keywords.HOMEWORK'), n=1)])
         return [c for c in children(self.module, None) if m.matches(c, mchr)]
 
     def code(self, node: CSTNode) -> str:

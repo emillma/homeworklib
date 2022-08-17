@@ -1,9 +1,9 @@
 from libcst import matchers as m
 from libcst import (parse_statement, parse_expression,
-                    Comment, EmptyLine, Assign, SimpleStatementLine, Name,
+                    Comment, EmptyLine, Assign, SimpleStatementLine,
                     AssignTarget, Call, Arg, IndentedBlock, Expr, Module)
 
-from hwlib_keywords import keywords
+from hwlib.keywords import keywordset
 from ..checkers import assert_not_contain_keywords
 from ..utils import MetaTransformer, MetaModule
 
@@ -21,7 +21,7 @@ class CodeRemover(MetaTransformer):
 
         def keyword_in_close_children(node):
             def haskeyword(node):
-                return any(self.qname_matches(node, kw) for kw in keywords)
+                return any(self.qname_matches(node, kw) for kw in keywordset)
 
             return any(map(haskeyword, self.children(node, limit=2)))
 
@@ -78,21 +78,3 @@ class ImportSolution(MetaTransformer):
             f'from {frompart} import {fname} as {fname}_solu')
         newbody = [*updated_node.body[:idx], newline, *updated_node.body[idx:]]
         return updated_node.with_changes(body=newbody)
-
-
-class PASSWORDReplacer(MetaTransformer):
-    password = str
-
-    def leave_Name(self, _: Name, upd_name: Name) -> "Name":
-        if m.matches(upd_name, m.Name()):
-            upd_name = SimpleString(f"'{self.password}'")
-        return upd_name
-
-    @classmethod
-    def with_password(cls: "PASSWORDReplacer", password: str
-                      ) -> "PASSWORDReplacer":
-        def factry(module: PASSWORDReplacer) -> PASSWORDReplacer:
-            obj: PASSWORDReplacer = cls(module)
-            obj.password = password
-            return obj
-        return factry

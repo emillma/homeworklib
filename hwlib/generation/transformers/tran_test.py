@@ -8,6 +8,7 @@ from libcst import (FlattenSentinel, parse_expression, ClassDef, Return,
 
 from ..utils import (MetaTransformer, MetaModule,
                      params_as_tuple, NameReplacer, elem_iter)
+from .differs import Passworddiffer
 
 
 class TestTransformer(MetaTransformer):
@@ -125,8 +126,7 @@ class TestFuncsCreator(TestTransformer):
         return AssertCompare()
 
 
-class PASSWORDReplacer(MetaTransformer):
-    password = str
+class PASSWORDReplacer(MetaTransformer, Passworddiffer):
 
     def leave_Name(self, _: Name, upd_name: Name) -> "Name":
         if m.matches(upd_name, m.Name('PASSWORD')):
@@ -135,12 +135,3 @@ class PASSWORDReplacer(MetaTransformer):
             else:
                 return Name('None')
         return upd_name
-
-    @classmethod
-    def with_password(cls: "PASSWORDReplacer", password: str
-                      ) -> "PASSWORDReplacer":
-        def factry(module: PASSWORDReplacer, **_) -> PASSWORDReplacer:
-            obj: PASSWORDReplacer = cls(module)
-            obj.password = password
-            return obj
-        return factry

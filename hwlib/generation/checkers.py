@@ -1,7 +1,7 @@
 from libcst import Return, CSTNode, SimpleStatementLine, FunctionDef
 from libcst import matchers as m
 
-from hwlib_keywords import keywords
+from hwlib.keywords import keywordset
 from .utils import MetaModule, MetaVisitor, HyperTraverser
 
 
@@ -10,7 +10,7 @@ def assert_not_contain_keywords(vistran: MetaModule,
                                 ):
     """Checks that there are no handoutgen keywords in node that"""
 
-    for kayword in keywords:
+    for kayword in keywordset:
         nodes = m.findall(node_to_remove, vistran.qname_matcher_prov(kayword))
         keyword_node = next(iter(nodes), None)
         assert not keyword_node, ("Keyword has no effect\n"

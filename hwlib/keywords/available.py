@@ -2,15 +2,41 @@
 from typing import TypeVar
 import os
 import sys
+from typing import Literal
 from .datacatcher import DataCatcher
-from .keyword import Keyword
+
+T = TypeVar('T')
+
+
+class Keyword:
+    registered = set()
+
+    def __init__(self, func):
+        self._func = func
+        self._name = func.__qualname__
+        self._qname = f"hwlib.keywords.{self._name}"
+        self._bool = True
+        Keyword.registered.add(self)
+
+    def __bool__(self) -> Literal[True]:
+        return True
+
+    def __call__(self, *args, **kwargs):
+        return self._func(*args, **kwargs)
+
+    def __str__(self):
+        return self._qname
+
+    @classmethod
+    def from_func(cls: "Keyword", func: T) -> T:
+        return cls(func)
 
 
 _data_out_file = os.environ.get('HWG_DATA_OUT_FILE', None)
 _collecting_data = bool(_data_out_file)
 _data_catcher = DataCatcher(100)
 
-keywords = Keyword.registered
+keywordset = Keyword.registered
 
 T = TypeVar('T')
 

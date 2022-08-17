@@ -28,6 +28,14 @@ general = (ImportRemover,
            KEEPReplacer,
            EXITIFCOLLECTINGRemover,
            )
+solu = (*general,
+        RedirectImports,
+        ImportSoluUsage,
+        REPLACEReplacer.ishomework(False),
+        TOASSIGNReplacer.ishomework(False)
+
+        )
+
 out_sup = (*general,
            REPLACEReplacer.ishomework(True),
            TOASSIGNReplacer.ishomework(True)
@@ -37,13 +45,10 @@ out__task = (*out_sup,
              CodeRemover,
              SolutionBeforeReturnAdder,
              )
-out__solu = (*general,
-             RedirectImports,
-             ImportSoluUsage,
-             MarkSoluUsage,
-             REPLACEReplacer.ishomework(False),
-             TOASSIGNReplacer.ishomework(False)
+out__solu = (*solu,
+             MarkSoluUsage.with_password(None),
              )
+
 out__tests = (ImportNameReplacer,
               TestFuncsCreator,
               PASSWORDReplacer.with_password(None),
@@ -63,8 +68,8 @@ gr__tests = (
     TestFuncsCreator,
     PASSWORDReplacer.with_password(PASSWORD)
 )
-gr__solu = (*out__solu,
-            PASSWORDReplacer.with_password(PASSWORD)
+gr__solu = (*solu,
+            MarkSoluUsage.with_password(PASSWORD),
             )
 gr__check = (PASSWORDReplacer.with_password(PASSWORD),)
 
