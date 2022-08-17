@@ -115,22 +115,12 @@ class HWGenerator:
         self.out_solu_dir.joinpath('__init__.py').touch()
         self.out_code_dir.joinpath('__init__.py').touch()
 
-    def modify_files(self):
-        replacements = {'CODEDIR': self.code_dir.name}
-
-        for file in self.out_proj_dir.rglob('*'):
-            if file.is_file() and re.fullmatch(r'.*[^(.py)]', str(file)):
-                text = file.read_text()
-                for pattern, repl in replacements.items():
-                    text = re.sub(pattern, repl, text)
-                file.write_text(text)
-
     def copy_files(self):
         def from_proj(path: Path):
             newpath = self.proj_dir.joinpath(path.relative_to(self.proj_dir))
             copy(path, newpath)
 
-        def from_template(name: Path, target: Path):
+        def from_tpl(name: Path, target: Path):
             path = self.template_dir.joinpath(name)
             if target.exists() and target.is_dir():
                 target = target.joinpath(path.name)
@@ -141,11 +131,19 @@ class HWGenerator:
             else:
                 raise Exception
 
-        from_template('compare.py', self.out_test_dir)
-        from_template('conftest.py', self.out_test_dir)
-        from_template('vscode', self.out_proj_dir.joinpath('.vscode'))
-        from_template('devcontainer',
-                      self.out_proj_dir.joinpath('.devcontainer'))
+        from_tpl('vscode', self.out_proj_dir.joinpath('.vscode'))
+        from_tpl('devcontainer', self.out_proj_dir.joinpath('.devcontainer'))
+        from_tpl('compare.py', self.out_test_dir)
+        from_tpl('conftest.py', self.out_test_dir)
+        from_tpl('create_handin.py', self.out_proj_dir)
+
+    def modify_files(self):
+        replacements = {'CODEDIR': self.code_dir.name}
+        for file in [f for f in self.out_proj_dir.rglob('*') if f.is_file()]:
+            text = file.read_text()
+            for pattern, repl in replacements.items():
+                text = re.sub(pattern, repl, text)
+            file.write_text(text)
 
     def start_data_collection(self, outfile):
         cmd = f"HWG_DATA_OUT_FILE={outfile} python3 {self.runfile}"

@@ -17,7 +17,6 @@ setuptools.setup(
     packages=['hwlib.keywords', 'hwlib'],
     package_dir={
         'hwlib': 'hwlib',
-        'hwlib.keywords': 'hwlib.keywords',
     },
     include_package_data=True,
     # package_data={},
