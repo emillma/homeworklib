@@ -32,7 +32,7 @@ class Keyword:
         return cls(func)
 
 
-_data_out_file = os.environ.get('HWG_DATA_OUT_FILE', None)
+_data_out_file = os.environ.get('HWLIB_CATCH_FILE', None)
 _collecting_data = bool(_data_out_file)
 _data_catcher = DataCatcher(100)
 

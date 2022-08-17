@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="6" time="0.394" timestamp="2022-08-17T15:00:28.059744" hostname="fc8770d5a818"><testcase classname="output.deliveries._tmp_work.grade_handin_021.tests.test_inner_module.Test_add" name="test_output" time="0.003" /><testcase classname="output.deliveries._tmp_work.grade_handin_021.tests.test_inner_module.Test_add" name="test_solution_usage" time="0.002"><failure message="AssertionError: The function uses the solution&#10;assert not True&#10; +  where True = &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt;('inner.inner_module.add')&#10; +    where &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt; = UsageChecker.is_used">self = &lt;test_inner_module.Test_add object at 0x7ff137096d40&gt;
+test_data = {'inner.inner_module.add': [({'arg1': 1, 'arg2': 2}, 3)], 'module.swap': [({'a': 1, 'b': 2}, (1, 2)), ({'a': 4, 'b': 3}, (4, 3))], 'run.dependant_function': [({'a': 2, 'b': 1}, (1, 2))]}
+
+    def test_solution_usage(self, test_data):
+        """Tests if the solution is used in the function"""
+        func_id = 'inner.inner_module.add'
+        for kwargs, ret_s in test_data[func_id]:
+            UsageChecker.reset_usage(func_id, 'qnfkhg')
+            inner_module.add(**kwargs)
+            msg = "The function uses the solution"
+&gt;           assert not UsageChecker.is_used(func_id), msg
+E           AssertionError: The function uses the solution
+E           assert not True
+E            +  where True = &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt;('inner.inner_module.add')
+E            +    where &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt; = UsageChecker.is_used
+
+output/deliveries/_tmp_work/grade_handin_021/tests/test_inner_module.py:46: AssertionError</failure></testcase><testcase classname="output.deliveries._tmp_work.grade_handin_021.tests.test_module.Test_swap" name="test_output" time="0.002" /><testcase classname="output.deliveries._tmp_work.grade_handin_021.tests.test_module.Test_swap" name="test_solution_usage" time="0.001"><failure message="AssertionError: The function uses the solution&#10;assert not True&#10; +  where True = &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt;('module.swap')&#10; +    where &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt; = UsageChecker.is_used">self = &lt;test_module.Test_swap object at 0x7ff1370968f0&gt;
+test_data = {'inner.inner_module.add': [({'arg1': 1, 'arg2': 2}, 3)], 'module.swap': [({'a': 1, 'b': 2}, (1, 2)), ({'a': 4, 'b': 3}, (4, 3))], 'run.dependant_function': [({'a': 2, 'b': 1}, (1, 2))]}
+
+    def test_solution_usage(self, test_data):
+        """Tests if the solution is used in the function"""
+        func_id = 'module.swap'
+        for kwargs, ret_s in test_data[func_id]:
+            UsageChecker.reset_usage(func_id, 'qnfkhg')
+            module.swap(**kwargs)
+            msg = "The function uses the solution"
+&gt;           assert not UsageChecker.is_used(func_id), msg
+E           AssertionError: The function uses the solution
+E           assert not True
+E            +  where True = &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt;('module.swap')
+E            +    where &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt; = UsageChecker.is_used
+
+output/deliveries/_tmp_work/grade_handin_021/tests/test_module.py:47: AssertionError</failure></testcase><testcase classname="output.deliveries._tmp_work.grade_handin_021.tests.test_run.Test_dependant_function" name="test_output" time="0.002" /><testcase classname="output.deliveries._tmp_work.grade_handin_021.tests.test_run.Test_dependant_function" name="test_solution_usage" time="0.001"><failure message="AssertionError: The function uses the solution&#10;assert not True&#10; +  where True = &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt;('run.dependant_function')&#10; +    where &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt; = UsageChecker.is_used">self = &lt;test_run.Test_dependant_function object at 0x7ff1370c7bb0&gt;
+test_data = {'inner.inner_module.add': [({'arg1': 1, 'arg2': 2}, 3)], 'module.swap': [({'a': 1, 'b': 2}, (1, 2)), ({'a': 4, 'b': 3}, (4, 3))], 'run.dependant_function': [({'a': 2, 'b': 1}, (1, 2))]}
+
+    def test_solution_usage(self, test_data):
+        """Tests if the solution is used in the function"""
+        func_id = 'run.dependant_function'
+        for kwargs, ret_s in test_data[func_id]:
+            UsageChecker.reset_usage(func_id, 'qnfkhg')
+            run.dependant_function(**kwargs)
+            msg = "The function uses the solution"
+&gt;           assert not UsageChecker.is_used(func_id), msg
+E           AssertionError: The function uses the solution
+E           assert not True
+E            +  where True = &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt;('run.dependant_function')
+E            +    where &lt;bound method UsageChecker.is_used of &lt;class 'solution.solu_usage_checker.UsageChecker'&gt;&gt; = UsageChecker.is_used
+
+output/deliveries/_tmp_work/grade_handin_021/tests/test_run.py:46: AssertionError</failure></testcase></testsuite></testsuites>

@@ -146,7 +146,7 @@ class HWGenerator:
             file.write_text(text)
 
     def start_data_collection(self, outfile):
-        cmd = f"HWG_DATA_ho_FILE={outfile} python3 {self.runfile}"
+        cmd = f"HWLIB_CATCH_FILE={outfile} python3 {self.runfile}"
         self.data_process = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
 
     def wait_for_data_collection(self):

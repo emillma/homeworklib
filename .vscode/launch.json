@@ -33,9 +33,9 @@
             "name": "Python: datacatchtest",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/handouttesting/mystuff/test1.py",
+            "program": "${workspaceFolder}/testproject/mystuff/run.py",
             "env": {
-                "HWG_DATA_OUT_FILE": "${workspaceFolder}/handouts/testfile.pickle"
+                "HWLIB_CATCH_FILE": "${workspaceFolder}/output/testfile.pickle"
             },
             "console": "integratedTerminal",
             // "justMyCode": false
