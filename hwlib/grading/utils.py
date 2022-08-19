@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import re
 from functools import cache
 from typing import Iterable, Tuple
+import numpy as np
 
 
 def extraxt_junitxml_results(junitxml_file: Path) -> dict[str, bool]:
@@ -34,22 +35,35 @@ def parse_junit_xml(junitxml_file: Path):
     return formated
 
 
+def foo(name: str):
+    parts: list = name.split('.')
+    if len(parts) < 3:
+        parts.insert(1, '')
+
+    def acronym(part: str):
+        if len(part) <= 8:
+            return part
+        else:
+            return part[:3] + re.sub('[aeiouy]', '', part[3:])
+    module = acronym(parts[0])
+    clsname = acronym(parts[1] if len(parts) >= 3 else '')
+    fname = '.'.join(acronym(n) for n in parts[2:])
+    return [module, clsname, fname]
+
+
 def get_csv(test_results: Iterable[Tuple[str, dict[str, dict]]]) -> str:
     names = set()
     test_results = sorted(list(test_results), key=lambda n: n[0])
     for name, results in test_results:
         names.update(results.keys())
 
-    # tmp = [n.split('.') for n in names]
-    # while True:
-    #     done = set()
-    #     for i, t in enumerate(tmp):
-    #         part = t.pop(0)
-    heading = ['name', 'total', *names]
+    heading = np.array([foo(n) for n in names]).T
+    heading = np.concatenate((np.tile('', (3, 2)), heading), axis=1)
+    heading[2, :2] = ['name', 'total']
 
     @cache
     def index(name):
-        return heading.index(name)
+        return list(names).index(name)+2
     lines = []
     for name, results in test_results:
 
@@ -58,4 +72,4 @@ def get_csv(test_results: Iterable[Tuple[str, dict[str, dict]]]) -> str:
         for test, res in results.items():
             line[index(test)] = res
         lines.append(line)
-    return '\n'.join((','.join(ln) for ln in (heading, *lines)))
+    return '\n'.join((','.join(ln) for ln in (*heading, *lines)))

@@ -40,7 +40,9 @@ class DataCatcher:
         @wraps(func)
         def wrapper(*args, **kwargs):
 
-            argvals = inspect.signature(func).bind(*args, **kwargs).arguments
+            tmpargs = inspect.signature(func).bind(*args, **kwargs)
+            tmpargs.apply_defaults()
+            argvals = tmpargs.arguments
             ret = func(*args, **kwargs)
 
             fdata = self.data.setdefault(fkey, [])

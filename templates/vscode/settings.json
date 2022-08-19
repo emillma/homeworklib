@@ -19,6 +19,7 @@
         "**/__pycache__/": true,
         // "*.egg-info": true
     },
+    "testing.automaticallyOpenPeekView": "never"
     // "editor.codeLens": false,
     // "python.linting.pylintArgs": [
     //     "--disable=missing-docstring,import-error,wrong-import-position",

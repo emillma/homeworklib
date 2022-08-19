@@ -12,13 +12,13 @@ from .differs import HomeworkDiffer
 
 
 class DecoratorRemover(MetaTransformer):
-    def leave_Decorator(self, original_node: "Decorator",
-                        updated_node: "Decorator"
+    def leave_Decorator(self, orig_decor: "Decorator",
+                        upd_decor: "Decorator"
                         ) -> Union["Decorator", RemovalSentinel]:
-        if self.qname_prov[original_node.decorator]():
+        if self.get_qname(orig_decor.decorator) == 'hwlib.keywords.HOMEWORK':
             return RemovalSentinel.REMOVE
         else:
-            return updated_node
+            return upd_decor
 
 
 class ImportRemover(MetaTransformer):

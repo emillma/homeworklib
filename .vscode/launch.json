@@ -5,13 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: eskf",
+            "type": "python",
+            "request": "launch",
+            "program": "testproject/eskf/run.py",
+            "console": "integratedTerminal",
+            // "justMyCode": false
+        },
+        {
             "name": "Python: test_handoutgen",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
                 "testproject",
-                "testproject/mystuff/run.py",
+                "testproject/eskf/run.py",
                 "output",
             ],
             "console": "integratedTerminal",
@@ -33,7 +41,7 @@
             "name": "Python: datacatchtest",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/testproject/mystuff/run.py",
+            "program": "testproject/eskf/run.py",
             "env": {
                 "HWLIB_CATCH_FILE": "${workspaceFolder}/output/testfile.pickle"
             },
