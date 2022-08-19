@@ -30,11 +30,9 @@ def args_as_tuple(node: Call) -> BaseExpression:
         return Tuple([Element(ag.value)for ag in node.args], [], [])
 
 
-def params_as_tuple(func: FunctionDef, as_iterable=False) -> BaseExpression:
+def params_as_tuple(func: FunctionDef, as_iterable=False) -> Tuple:
     """ g = foo(a, b, c) -> g = a, b, c"""
-    if len(func.params.params) == 1:
-        return func.params.params[0].name
-    elif not func.params.params:
+    if not func.params.params:
         return Tuple([])
     else:
         return Tuple([Element(pa.name) for pa in func.params.params], [], [])

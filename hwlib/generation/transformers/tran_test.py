@@ -57,7 +57,7 @@ class TestFuncsCreator(TestTransformer):
             tc = updated_node.deep_clone()
             tr = Toreplace()
 
-            qname = self.get_qname(func)
+            qname = self.get_qname(func).replace('.', '__')
             tr.TESTCLASS = Name(f"Test_{qname.replace('.','_')}")
             tr.FUNCTION = Name(qname)
             tr.FUNC_ID = SimpleString(f"'{self.id_str(func)}'")
@@ -112,16 +112,11 @@ class TestFuncsCreator(TestTransformer):
                     return upd_assert
                 key_s = f'{key}_SOLU'
                 upd = upd_assert
-                if m.matches(names, m.Name()):
-                    upd = m.replace(upd, m.Name(key), names)
-                    upd = m.replace(upd, m.Name(key_s), names_s)
-
-                elif m.matches(names, m.Tuple()):
-                    iterator = zip(*map(elem_iter, [names, names_s]))
-                    upd = FlattenSentinel([upd
-                                           .visit(NameReplacer(key, arg))
-                                           .visit(NameReplacer(key_s, arg_s))
-                                           for (arg, arg_s) in iterator])
+                iterator = zip(*map(elem_iter, [names, names_s]))
+                upd = FlattenSentinel([upd
+                                       .visit(NameReplacer(key, arg))
+                                       .visit(NameReplacer(key_s, arg_s))
+                                       for (arg, arg_s) in iterator])
                 return upd
         return AssertCompare()
 
