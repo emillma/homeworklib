@@ -5,16 +5,16 @@ from hwlib.keywords import keywordset
 from .utils import MetaModule, MetaVisitor, HyperTraverser
 
 
-def assert_not_contain_keywords(vistran: MetaModule,
-                                node_to_remove: CSTNode,
+def assert_not_contain_keywords(module: MetaModule,
+                                node: CSTNode,
                                 ):
     """Checks that there are no handoutgen keywords in node that"""
 
     for kayword in keywordset:
-        nodes = m.findall(node_to_remove, vistran.qname_matcher_prov(kayword))
+        nodes = m.findall(node, module.qname_matcher_prov(kayword))
         keyword_node = next(iter(nodes), None)
         assert not keyword_node, ("Keyword has no effect\n"
-                                  f"{vistran.pos_str(keyword_node)}")
+                                  f"{module.pos_str(keyword_node)}")
 
 
 class CheckReturns(MetaVisitor):

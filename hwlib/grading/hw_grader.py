@@ -37,8 +37,8 @@ class HWGrader:
 
         p = Pool(cpu_count(), initializer=mute)
         chunksize = (len(self.handins)-1)//cpu_count() + 1
-        resiter = p.imap_unordered(self.grade, args, chunksize)
-        # resiter = map(self.grade, args)
+        # resiter = p.imap_unordered(self.grade, args, chunksize)
+        resiter = map(self.grade, args)
 
         res = get_csv(resiter)
         self.work_dir.joinpath(f'{self.grader_dir.name}.csv').write_text(res)

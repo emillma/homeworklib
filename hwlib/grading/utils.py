@@ -35,7 +35,7 @@ def parse_junit_xml(junitxml_file: Path):
     return formated
 
 
-def foo(name: str):
+def split_name(name: str):
     parts: list = name.split('.')
     if len(parts) < 3:
         parts.insert(1, '')
@@ -53,11 +53,11 @@ def foo(name: str):
 
 def get_csv(test_results: Iterable[Tuple[str, dict[str, dict]]]) -> str:
     names = set()
-    test_results = sorted(list(test_results), key=lambda n: n[0])
+    test_results = sorted([i for i in test_results], key=lambda n: n[0])
     for name, results in test_results:
         names.update(results.keys())
 
-    heading = np.array([foo(n) for n in names]).T
+    heading = np.array([split_name(n) for n in names]).T
     heading = np.concatenate((np.tile('', (3, 2)), heading), axis=1)
     heading[2, :2] = ['name', 'total']
 

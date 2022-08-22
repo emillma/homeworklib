@@ -63,8 +63,8 @@ class HWGenerator:
 
     def create_handout(self):
         self.create_ho_folder_structure()
-        self.copy_files()
-        self.modify_files()
+        self.copy_template_files()
+        self.modify_template_files()
         checker = get_ho_usage_checker(self.solu_checker)
         self.ho_solu_dir.joinpath('solu_usage_checker.py').write_text(checker)
         for module in self.modules:
@@ -115,10 +115,10 @@ class HWGenerator:
         self.ho_solu_dir.joinpath('__init__.py').touch()
         self.ho_code_dir.joinpath('__init__.py').touch()
 
-    def copy_files(self):
-        def from_proj(path: Path):
-            newpath = self.proj_dir.joinpath(path.relative_to(self.proj_dir))
-            copy(path, newpath)
+    def copy_template_files(self):
+        # def from_proj(path: Path):
+        #     newpath = self.proj_dir.joinpath(path.relative_to(self.proj_dir))
+        #     copy(path, newpath)
 
         def from_tpl(name: Path, target: Path):
             path = self.template_dir.joinpath(name)
@@ -137,7 +137,7 @@ class HWGenerator:
         from_tpl('conftest.py', self.ho_test_dir)
         from_tpl('create_handin.py', self.ho_proj_dir)
 
-    def modify_files(self):
+    def modify_template_files(self):
         replacements = {'CODEDIR': self.code_dir.name}
         for file in [f for f in self.ho_proj_dir.rglob('*') if f.is_file()]:
             text = file.read_text()
