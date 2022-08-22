@@ -58,7 +58,7 @@ class TestFuncsCreator(TestTransformer):
             tr = Toreplace()
 
             qname = self.get_qname(func)
-            tr.TESTCLASS = Name(f"Test_{qname.replace('.','_')}")
+            tr.TESTCLASS = Name(f"Test_{qname.replace('.','__')}")
             tr.FUNCTION = parse_expression(qname)
             tr.FUNC_ID = SimpleString(f"'{self.id_str(func)}'")
 

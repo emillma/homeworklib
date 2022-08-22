@@ -1,5 +1,6 @@
 from libcst import Return, CSTNode, SimpleStatementLine, FunctionDef
 from libcst import matchers as m
+from pathlib import Path
 
 from hwlib.keywords import keywordset
 from .utils import MetaModule, MetaVisitor, HyperTraverser
@@ -57,3 +58,30 @@ def pre_check_mmodule(module: MetaModule) -> None:
     ],
         module=module)
     module.visit(trav)
+
+
+def final_control(directory: Path, grader_dir: Path) -> None:
+    """
+    Final control over the homework.
+    """
+    import subprocess
+    import sys
+    from shutil import rmtree
+    from hwlib.grading import HWGrader
+
+    control_dir = directory.joinpath('control')
+    if control_dir.is_dir():
+        rmtree(control_dir)
+    directory.joinpath('control').mkdir()
+
+    for part_dir in directory.iterdir():
+        if not part_dir.is_dir():
+            continue
+        if make_handin_script := next(part_dir.glob('create_handin.py'), None):
+            subprocess.run([sys.executable, str(make_handin_script)])
+            handin_dir = part_dir.joinpath('handin')
+            dirname = f"handin_{part_dir.name}"
+            handin_dir.rename(directory.joinpath('control').joinpath(dirname))
+
+    res = HWGrader(control_dir, grader_dir).call()
+    pass

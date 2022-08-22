@@ -25,7 +25,7 @@ def create_handin():
     for file in (f for f in project_dir.rglob('*') if f.is_file()):
         rel2project = file.relative_to(project_dir)
         if should_include(rel2project):
-            newpath = handin_dir.joinpath(file)
+            newpath = handin_dir.joinpath(rel2project)
             newpath.parent.mkdir(parents=True, exist_ok=True)
             copy(str(file), str(newpath))
 

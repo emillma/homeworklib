@@ -31,7 +31,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/grade.py",
             "args": [
-                "output",
+                "output/control",
                 "output/GR_testproject",
             ],
             "console": "integratedTerminal",

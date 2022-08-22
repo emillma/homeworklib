@@ -36,18 +36,19 @@ def parse_junit_xml(junitxml_file: Path):
 
 
 def split_name(name: str):
-    parts: list = name.split('.')
-    if len(parts) < 3:
-        parts.insert(1, '')
-
     def acronym(part: str):
         if len(part) <= 8:
             return part
         else:
             return part[:3] + re.sub('[aeiouy]', '', part[3:])
-    module = acronym(parts[0])
-    clsname = acronym(parts[1] if len(parts) >= 3 else '')
-    fname = '.'.join(acronym(n) for n in parts[2:])
+
+    module, func_or_method = name.split('.')
+    if len(parts := func_or_method.split('__')) >= 2:
+        clsname = acronym(parts[0])
+        fname = '__'.join(acronym(n) for n in parts[1:])
+    else:
+        clsname = ''
+        fname = acronym(parts[0])
     return [module, clsname, fname]
 
 

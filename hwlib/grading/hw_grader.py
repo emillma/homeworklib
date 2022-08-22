@@ -1,15 +1,13 @@
 from pathlib import Path
 from shutil import rmtree, copy, copytree
-from typing import Optional
-from subprocess import Popen, PIPE
-import re
 from pytest import main as runpytest
 from .utils import parse_junit_xml, get_csv
 from multiprocessing import Pool, current_process, cpu_count
+import subprocess
 import sys
 import os
 from itertools import repeat
-from typing import Tuple, Set
+from typing import Tuple
 from hwlib.config import DEBUG
 import filecmp
 
@@ -27,7 +25,6 @@ class HWGrader:
     def call(self):
         self.cleanup()
         self.makedirs()
-        os.environ['PYTHONOPTIMIZE'] = '1'
 
         def mute():
             sys.stdout = open(os.devnull, 'w')
@@ -60,11 +57,12 @@ class HWGrader:
             copytree(gr_dir, process_dir)
 
         HWGrader.insert_handin_files(handin_dir, process_dir)
-        runpytest([str(process_dir),
-                   '--capture=no',
-                   '--tb=no',
-                   '--continue-on-collection-errors',
-                   f'--junitxml={junit_file}'])
+        subprocess.run(['pytest',
+                        str(process_dir),
+                        '--capture=no',
+                        '--tb=no',
+                        '--continue-on-collection-errors',
+                        f'--junitxml={junit_file}'])
         results = parse_junit_xml(junit_file)
 
         HWGrader.restore_files(process_dir, gr_dir)
