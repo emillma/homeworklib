@@ -21,6 +21,7 @@
                 "testproject",
                 "testproject/eskf/run.py",
                 "output",
+                "--rm"
             ],
             "console": "integratedTerminal",
             // "justMyCode": false

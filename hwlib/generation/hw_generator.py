@@ -63,7 +63,8 @@ class HWGenerator:
         for dir in (self.ho_test_dir, self.lf_test_dir, self.gr_test_dir):
             copy(self.tmp_test_data, dir.joinpath('data/testdata.pickle'))
         self.tmp_test_data.unlink()
-        final_control(self.output_dir, self.gr_proj_dir)
+        res_arr = final_control(self.output_dir, self.gr_proj_dir)
+        logger.info(res_arr[4:7, :2])
 
     def create_handout(self):
         logger.info('Creating handout folder')
@@ -121,10 +122,12 @@ class HWGenerator:
         self.ho_solu_dir.joinpath('__init__.py').touch()
         self.ho_code_dir.joinpath('__init__.py').touch()
 
+    def copy_proj_files(self):
+        def from_proj(path: Path):
+            newpath = self.proj_dir.joinpath(path.relative_to(self.proj_dir))
+            copy(path, newpath)
+
     def copy_template_files(self):
-        # def from_proj(path: Path):
-        #     newpath = self.proj_dir.joinpath(path.relative_to(self.proj_dir))
-        #     copy(path, newpath)
 
         def from_tpl(name: Path, target: Path):
             path = self.template_dir.joinpath(name)

@@ -52,25 +52,33 @@ def split_name(name: str):
     return [module, clsname, fname]
 
 
-def get_csv(test_results: Iterable[Tuple[str, dict[str, dict]]]) -> str:
+def get_results_array(test_results: dict[str, dict[str, str]]) -> str:
     names = set()
-    test_results = sorted([i for i in test_results], key=lambda n: n[0])
+    test_results = sorted([i for i in test_results.items()],
+                          key=lambda n: n[0])
     for name, results in test_results:
         names.update(results.keys())
 
-    heading = np.array([split_name(n) for n in names]).T
-    heading = np.concatenate((np.tile('', (3, 2)), heading), axis=1)
-    heading[2, :2] = ['name', 'total']
+    shape = len(test_results)+4, len(names)+2
+    res_arr = np.full(shape, '', dtype=object)
 
-    @cache
-    def index(name):
-        return list(names).index(name)+2
-    lines = []
-    for name, results in test_results:
+    res_arr[:3, 2:] = np.array([split_name(n) for n in names], dtype=object).T
+    res_arr[3, :2] = ['name', 'total']
 
-        score = sum((r == 'FF' for r in results))
-        line = [name, f'{score}/{len(names)}', *(['FF']*len(names))]
-        for test, res in results.items():
-            line[index(test)] = res
-        lines.append(line)
-    return '\n'.join((','.join(ln) for ln in (*heading, *lines)))
+    grade_part = res_arr[4:, 2:]
+    namepart = res_arr[4:, 0]
+
+    total_per_hin = res_arr[4:, 1]
+    total_per_task = res_arr[3, 2:]
+
+    for i, (name, results) in enumerate(test_results):
+        namepart[i] = name
+        sortidx = np.argsort(tuple(results.keys()))
+        grade_part[i] = np.array(tuple(results.values()))[sortidx]
+
+    passed = grade_part == 'PP'
+    total_per_hin[:] = [f'{p}/{len(names)}' for p in np.sum(passed, axis=1)]
+    total_per_task[:] = [f'{p}/{len(test_results)}'
+                         for p in np.sum(passed, axis=0)]
+
+    return res_arr

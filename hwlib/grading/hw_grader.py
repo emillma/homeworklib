@@ -1,7 +1,7 @@
 from pathlib import Path
 from shutil import rmtree, copy, copytree
 from pytest import main as runpytest
-from .utils import parse_junit_xml, get_csv
+from .utils import parse_junit_xml, get_results_array
 from multiprocessing import Pool, current_process, cpu_count
 import subprocess
 import sys
@@ -10,6 +10,7 @@ from itertools import repeat
 from typing import Tuple
 from hwlib.config import DEBUG
 import filecmp
+import re
 
 
 class HWGrader:
@@ -26,19 +27,22 @@ class HWGrader:
         self.cleanup()
         self.makedirs()
 
-        def mute():
-            sys.stdout = open(os.devnull, 'w')
         args = zip(self.handins[:10],
                    repeat(self.work_dir),
                    repeat(self.grader_dir))
 
-        p = Pool(cpu_count(), initializer=mute)
+        p = Pool(cpu_count())
         chunksize = (len(self.handins)-1)//cpu_count() + 1
-        # resiter = p.imap_unordered(self.grade, args, chunksize)
-        resiter = map(self.grade, args)
+        resiter = p.imap(self.grade, args, chunksize)
+        # resiter = map(self.grade, args)
+        results = dict(resiter)
 
-        res = get_csv(resiter)
-        self.work_dir.joinpath(f'{self.grader_dir.name}.csv').write_text(res)
+        res_arr = get_results_array(results)
+        csvtext = '\n'.join(','.join(ln) for ln in res_arr)
+        resname = re.sub('^GR', 'results', f'{self.grader_dir.name}.csv')
+        self.handins_dir.joinpath(resname).write_text(csvtext)
+        self.cleanup()
+        return res_arr
 
     def makedirs(self):
         for dir in (self.work_dir, self.handins_dir, self.report_dir):
@@ -62,7 +66,9 @@ class HWGrader:
                         '--capture=no',
                         '--tb=no',
                         '--continue-on-collection-errors',
-                        f'--junitxml={junit_file}'])
+                        f'--junitxml={junit_file}'],
+                       stdout=open(os.devnull, 'w'),
+                       stderr=open(os.devnull, 'w'))
         results = parse_junit_xml(junit_file)
 
         HWGrader.restore_files(process_dir, gr_dir)

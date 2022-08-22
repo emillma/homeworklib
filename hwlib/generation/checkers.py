@@ -84,4 +84,4 @@ def final_control(directory: Path, grader_dir: Path) -> None:
             handin_dir.rename(directory.joinpath('control').joinpath(dirname))
 
     res = HWGrader(control_dir, grader_dir).call()
-    pass
+    return res
