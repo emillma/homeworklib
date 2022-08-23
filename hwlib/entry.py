@@ -17,6 +17,7 @@ def generate_homework():
     args = parser.parse_args()
 
     module_dir = Path(args.module_dir).resolve()
+    print(module_dir)
     runfile = Path(args.runfile).resolve()
     output_dir = Path(args.output_dir).resolve().joinpath(module_dir.name)
 

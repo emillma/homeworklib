@@ -29,11 +29,16 @@ class MetaModule:
     parent_prov: ParentNodeProvider
     pos_prov: PositionProvider
     task_funcs: Sequence[FunctionDef]
+    latex_func_bodies: dict[str, str]
+    latex_func_defs: dict[str, str]
+
     istask: bool
 
     def __init__(self, fpath: Path, project_dir: Path = None):
         self.path = fpath
         self.proj_dir = project_dir
+        self.latex_func_bodies = {}
+        self.latex_func_defs = {}
 
     @classmethod
     def from_path(cls, fpath: Path):
@@ -121,7 +126,7 @@ class MetaModule:
             parents.extend(self.parent_task(parents[-1], get_chain=True))
             return parents if get_chain else parents[-1]
 
-    def pos_str(self, node: CSTNode, full=False) -> str:
+    def get_pos_str(self, node: CSTNode, full=False) -> str:
         posprov = self.pos_prov.get(node, None)
         if full:
             out = (f"File \"{self.path} line {posprov.start.line}")
@@ -154,3 +159,11 @@ class MetaModule:
 
     def id_str(self, node: CSTNode) -> bool:
         return (f"{self.module_str}.{self.get_qname(node)}")
+
+    def add_latex_func_body(self, key: str, body_text: str):
+        assert key not in self.latex_func_bodies
+        self.latex_func_bodies[key] = body_text
+
+    def add_latex_func_def(self, key: str, def_text: str):
+        assert key not in self.latex_func_defs
+        self.latex_func_defs[key] = def_text

@@ -22,5 +22,5 @@ setuptools.setup(
     # package_data={},
     python_requires=">=3.8",
     entry_points={
-        'console_scripts': ['hwlib_generate=hwlib.entry:call'], }
+        'console_scripts': ['hwlib.generate=hwlib.entry:generate_homework'], }
 )

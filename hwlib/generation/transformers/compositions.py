@@ -3,12 +3,13 @@ from typing import Sequence
 from random import randint
 
 from ..utils import MetaModule, HyperTraverser, MetaTraverser
-from .tran_solu import RedirectImports, ImportSoluUsage, MarkSoluUsage
-from .tran_task import ImportSolution, CodeRemover, SolutionBeforeReturnAdder
-from .tran_test import ImportNameReplacer, TestFuncsCreator, PASSWORDReplacer
-from .tran_both import (ImportRemover, DecoratorRemover,
-                        KEEPReplacer, REPLACEReplacer,
-                        TOASSIGNReplacer, EXITIFCOLLECTINGRemover)
+from .solu import RedirectImports, ImportSoluUsage, MarkSoluUsage
+from .out import ImportSolution, CodeRemover, SolutionBeforeReturnAdder
+from .tests import ImportNameReplacer, TestFuncsCreator, PASSWORDReplacer
+from .latex_catchers import LatexFuncDefCatcher
+from .out_solu import (ImportRemover, DecoratorRemover,
+                       KEEPReplacer, REPLACEReplacer,
+                       TOASSIGNReplacer, EXITIFCOLLECTINGRemover)
 
 
 def process_composition(module: MetaModule, traversers: Sequence[MetaTraverser],
@@ -55,7 +56,9 @@ ho__check = (PASSWORDReplacer.with_password(None),
 
 lf__sup_task = (*general,
                 REPLACEReplacer.ishomework(False),
-                TOASSIGNReplacer.ishomework(False)
+                TOASSIGNReplacer.ishomework(False),
+                LatexFuncDefCatcher
+
                 )
 
 

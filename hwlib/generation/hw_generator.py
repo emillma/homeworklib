@@ -26,6 +26,7 @@ class HWGenerator:
         self.code_dir = self.proj_dir.joinpath(proj2run.parts[0])
 
         self.tmp_test_data = output_dir.joinpath('tmptestdata.pickle')
+        self.latex_dir = output_dir.joinpath(f'latex_{self.proj_dir.name}')
 
         self.ho_proj_dir = output_dir.joinpath('HO_'+self.proj_dir.name)
         self.ho_code_dir = self.ho_proj_dir.joinpath(self.code_dir.name)
@@ -57,7 +58,7 @@ class HWGenerator:
         self.start_data_collection(self.tmp_test_data)
         self.clean_output_folders()
         self.create_handout()
-        self.create_lf()
+        self.create_lf_and_latex()
         self.create_grader()
         self.wait_for_data_collection()
         for dir in (self.ho_test_dir, self.lf_test_dir, self.gr_test_dir):
@@ -87,11 +88,16 @@ class HWGenerator:
                 tname = f"test_{module.path.name}"
                 self.ho_test_dir.joinpath(tname).write_text(test)
 
-    def create_lf(self):
+    def create_lf_and_latex(self):
         logger.info('Creating LF folder')
+        self.latex_dir.mkdir()
         copytree(self.ho_proj_dir, self.lf_proj_dir)
         for module in self.modules:
             lf = get_lf_sup_task(module)
+            for key, value in module.latex_func_bodies.items():
+                self.latex_dir.joinpath(f'solu.{key}.py').write_text(value)
+            for key, value in module.latex_func_defs.items():
+                self.latex_dir.joinpath(f'def.{key}.py').write_text(value)
             self.lf_code_dir.joinpath(module.path_rel2code).write_text(lf)
 
     def create_grader(self):
@@ -107,9 +113,9 @@ class HWGenerator:
                 self.gr_test_dir.joinpath(tname).write_text(test)
 
     def clean_output_folders(self):
-        for dir in [self.ho_proj_dir, self.lf_proj_dir, self.gr_proj_dir]:
-            if dir.is_dir():
-                rmtree(dir)
+        if self.output_dir.is_dir():
+            rmtree(self.output_dir)
+        self.output_dir.mkdir()
 
     def create_ho_folder_structure(self):
         self.ho_proj_dir.mkdir()
