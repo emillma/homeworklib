@@ -94,11 +94,12 @@ class HWGenerator:
         copytree(self.ho_proj_dir, self.lf_proj_dir)
         for module in self.modules:
             lf = get_lf_sup_task(module)
-            for key, value in module.latex_func_bodies.items():
-                self.latex_dir.joinpath(f'solu.{key}.py').write_text(value)
-            for key, value in module.latex_func_defs.items():
-                self.latex_dir.joinpath(f'def.{key}.py').write_text(value)
             self.lf_code_dir.joinpath(module.path_rel2code).write_text(lf)
+
+            for relpath, value in module.latex_file_contents.items():
+                fpath = self.latex_dir.joinpath(relpath)
+                fpath.parent.mkdir(parents=True, exist_ok=True)
+                fpath.write_text(value)
 
     def create_grader(self):
         copytree(self.ho_proj_dir, self.gr_proj_dir)

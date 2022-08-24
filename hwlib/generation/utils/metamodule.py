@@ -30,7 +30,7 @@ class MetaModule:
     pos_prov: PositionProvider
     task_funcs: Sequence[FunctionDef]
     latex_func_bodies: dict[str, str]
-    latex_func_defs: dict[str, str]
+    latex_file_contents: dict[str, str]
 
     istask: bool
 
@@ -38,7 +38,7 @@ class MetaModule:
         self.path = fpath
         self.proj_dir = project_dir
         self.latex_func_bodies = {}
-        self.latex_func_defs = {}
+        self.latex_file_contents = {}
 
     @classmethod
     def from_path(cls, fpath: Path):
@@ -160,10 +160,6 @@ class MetaModule:
     def id_str(self, node: CSTNode) -> bool:
         return (f"{self.module_str}.{self.get_qname(node)}")
 
-    def add_latex_func_body(self, key: str, body_text: str):
-        assert key not in self.latex_func_bodies
-        self.latex_func_bodies[key] = body_text
-
-    def add_latex_func_def(self, key: str, def_text: str):
-        assert key not in self.latex_func_defs
-        self.latex_func_defs[key] = def_text
+    def add_latex_file(self, key: str, def_text: str):
+        assert key not in self.latex_file_contents
+        self.latex_file_contents[key] = def_text
