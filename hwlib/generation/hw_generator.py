@@ -12,6 +12,7 @@ from .transformers import (get_ho_sup, get_ho_task, get_ho_solu,
 from .checkers import pre_check_mmodule, final_control
 from .utils import MetaModule, NameReplacer
 from hwlib.logger import logger
+from .obfuscate import obfuscate_solution
 
 
 class HWGenerator:
@@ -61,11 +62,8 @@ class HWGenerator:
         self.create_lf_and_latex()
         self.create_grader()
         self.wait_for_data_collection()
-        for dir in (self.ho_test_dir, self.lf_test_dir, self.gr_test_dir):
-            copy(self.tmp_test_data, dir.joinpath('data/testdata.pickle'))
-        self.tmp_test_data.unlink()
-        res_arr = final_control(self.output_dir, self.gr_proj_dir)
-        logger.info(res_arr[4:7, :2])
+        self.add_test_data()
+        self.perform_final_control()
 
     def create_handout(self):
         logger.info('Creating handout folder')
@@ -87,6 +85,7 @@ class HWGenerator:
                 test = get_ho_test(module, self.testtemplate)
                 tname = f"test_{module.path.name}"
                 self.ho_test_dir.joinpath(tname).write_text(test)
+        # obfuscate_solution(self.ho_solu_dir)
 
     def create_lf_and_latex(self):
         logger.info('Creating LF folder')
@@ -172,3 +171,14 @@ class HWGenerator:
         stderr = self.data_process.stderr.read()
         stdout = self.data_process.stdout.read()
         assert not self.data_process.returncode, stderr.decode("utf-8")
+
+    def add_test_data(self):
+        logger.info('Adding test data')
+        for dir in (self.ho_test_dir, self.lf_test_dir, self.gr_test_dir):
+            copy(self.tmp_test_data, dir.joinpath('data/testdata.pickle'))
+        self.tmp_test_data.unlink()
+
+    def perform_final_control(self):
+        logger.info('Performing Final Control')
+        res_arr = final_control(self.output_dir, self.gr_proj_dir)
+        logger.info(res_arr[4:7, :2])

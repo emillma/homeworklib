@@ -1,10 +1,8 @@
 from pathlib import Path
 from shutil import rmtree, copy, copytree
-from pytest import main as runpytest
 from .utils import parse_junit_xml, get_results_array
 from multiprocessing import Pool, current_process, cpu_count
 import subprocess
-import sys
 import os
 from itertools import repeat
 from typing import Tuple

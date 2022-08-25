@@ -39,10 +39,10 @@ class HyperTraverser(CSTTransformer):
         return cls(fac(**kwargs) for fac in factories)
 
     def on_visit(self, node: "CSTNode") -> bool:
-        retval = False
+        retval = True
         for traverser in self.traversers:
-            newret = traverser.on_visit(node)
-            retval = retval or newret
+            if traverser.on_visit(node) is False:
+                retval = False
         return retval
 
     def on_leave(self, original_node: CSTNodeT, updated_node: CSTNodeT = None

@@ -88,7 +88,7 @@ class MetaModule:
             return []
         mchr = m.FunctionDef(decorators=[
             m.AtLeastN(self.qname_matcher_prov('hwlib.keywords.HOMEWORK'), n=1)])
-        return [c for c in children(self.module, None) if m.matches(c, mchr)]
+        return [c for c in children(self.module, -1) if m.matches(c, mchr)]
 
     def code(self, node: CSTNode) -> str:
         return self.module.code_for_node(node)
@@ -97,7 +97,7 @@ class MetaModule:
         return self.metawrap.visit(traverser)
 
     @staticmethod
-    def children(node: CSTNode, limit: Optional[int] = 1) -> Iterable[CSTNode]:
+    def children(node: CSTNode, limit: int = 1) -> Iterable[CSTNode]:
         return children(node, limit)
 
     def parent(self, node: CSTNode, *, step: int = 1) -> CSTNode:

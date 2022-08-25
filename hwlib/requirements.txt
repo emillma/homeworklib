@@ -1,0 +1,3 @@
+pyarmor
+roman
+numpy

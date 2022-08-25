@@ -3,7 +3,6 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import re
 from functools import cache
-from typing import Iterable, Tuple
 import numpy as np
 
 
@@ -58,6 +57,7 @@ def get_results_array(test_results: dict[str, dict[str, str]]) -> str:
                           key=lambda n: n[0])
     for name, results in test_results:
         names.update(results.keys())
+    names = sorted(names)
 
     shape = len(test_results)+4, len(names)+2
     res_arr = np.full(shape, '', dtype=object)
@@ -71,10 +71,11 @@ def get_results_array(test_results: dict[str, dict[str, str]]) -> str:
     total_per_hin = res_arr[4:, 1]
     total_per_task = res_arr[3, 2:]
 
+    idxdict = dict((name, i) for (i, name) in enumerate(names))
     for i, (name, results) in enumerate(test_results):
         namepart[i] = name
-        sortidx = np.argsort(tuple(results.keys()))
-        grade_part[i] = np.array(tuple(results.values()))[sortidx]
+        idxs = [idxdict[name] for name in results.keys()]
+        grade_part[i][idxs] = np.array(tuple(results.values()))
 
     passed = grade_part == 'PP'
     total_per_hin[:] = [f'{p}/{len(names)}' for p in np.sum(passed, axis=1)]

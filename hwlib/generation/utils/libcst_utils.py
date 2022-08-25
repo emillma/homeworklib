@@ -11,12 +11,12 @@ import re
 from functools import reduce
 
 
-def children(node: CSTNode, limit: Optional[int] = 1) -> Iterable[CSTNode]:
+def children(node: CSTNode, limit: int = 1) -> Iterable[CSTNode]:
     if limit == 1:
         yield from node.children
     else:
         for c in node.children:
-            yield from children(c, limit=None if limit is None else limit-1)
+            yield from children(c, limit-1)
             yield c
 
 
