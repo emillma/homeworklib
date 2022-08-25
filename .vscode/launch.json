@@ -18,13 +18,13 @@
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
-                "testproject",
-                "testproject/eskf/run.py",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2/src/run.py",
                 "output",
                 "--rm"
             ],
             "console": "integratedTerminal",
-            // "justMyCode": false
+            // "justMyCode": alse
         },
         {
             "name": "Python: test_grader",
@@ -42,12 +42,12 @@
             "name": "Python: datacatchtest",
             "type": "python",
             "request": "launch",
-            "program": "testproject/eskf/run.py",
+            "program": "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2/src/run.py",
             "env": {
                 "HWLIB_CATCH_FILE": "${workspaceFolder}/output/testfile.pickle"
             },
             "console": "integratedTerminal",
-            // "justMyCode": false
+            "justMyCode": false
         },
     ]
 }
