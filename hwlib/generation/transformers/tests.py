@@ -106,27 +106,24 @@ class TestFuncsCreator(TestTransformer):
         """replaces the compare(name, name_s)"""
 
         key_s = f'{key}_SOLU'
+        matcher = m.Call(m.Name('compare'), [m.Arg(m.Name(key)),
+                                             m.Arg(m.Name(key_s))])
 
         class ComparreTrans(CSTTransformer):
 
             def leave_Expr(self, orig_expr: Expr, upd_expr: Expr) -> Call:
-
-                if not m.matches(orig_expr.value,
-                                 m.Call(m.Name('compare'),
-                                        [m.Arg(m.Name(key)),
-                                         m.Arg(m.Name(key_s))])):
+                if not m.matches(orig_expr.value, matcher):
                     return upd_expr
-
                 if m.matches(names, m.Name()):
                     iterator = [(names, names_s)]
                 elif m.matches(names, m.Tuple()):
                     iterator = zip(*map(elem_iter, [names, names_s]))
-
                 upd_expr = FlattenSentinel([upd_expr
                                             .visit(NameReplacer(key, arg))
                                             .visit(NameReplacer(key_s, arg_s))
                                             for (arg, arg_s) in iterator])
                 return upd_expr
+
         return ComparreTrans()
 
 
