@@ -63,7 +63,7 @@ class HWGrader:
                         str(process_dir),
                         '--capture=no',
                         '--tb=no',
-                        '--continue-on-collection-errors',
+                        # '--continue-on-collection-errors',
                         f'--junitxml={junit_file}'],
                        stdout=open(os.devnull, 'w'),
                        stderr=open(os.devnull, 'w'))

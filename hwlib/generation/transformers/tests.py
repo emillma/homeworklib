@@ -4,7 +4,7 @@ from dataclasses import dataclass, field, fields
 from libcst import matchers as m
 from libcst import (FlattenSentinel, parse_expression, ClassDef, Return,
                     CSTTransformer, BaseExpression, Name, SimpleString, If,
-                    Assert, RemovalSentinel)
+                    Expr, RemovalSentinel, Call, SimpleStatementLine)
 
 from ..utils import (MetaTransformer, MetaModule,
                      params_as_tuple, NameReplacer, elem_iter)
@@ -63,25 +63,26 @@ class TestFuncsCreator(TestTransformer):
             tr.FUNC_ID = SimpleString(f"'{self.id_str(func)}'")
 
             if anyarg := func.params.params:
-                tr.ARGS = params_as_tuple(func)
+                args = params_as_tuple(func)
+                tr.ARGS = args.visit(NameReplacer('self', '_self'))
                 tr.ARGS_SOLU = tr.ARGS.visit(NameReplacer(r'(.+)', r'\1_s'))
                 tc = tc.visit(self.if_repl('ARGBLOCK', True))
-                tc = tc.visit(self.assert_repl('ARG', tr.ARGS, tr.ARGS_SOLU))
+                tc = tc.visit(self.comp_repl('ARG', tr.ARGS, tr.ARGS_SOLU))
             else:
                 tc = tc.visit(self.if_repl('ARGBLOCK', False))
 
             return_node: Return = next(iter(m.findall(func, m.Return())), None)
             if anyret := getattr(return_node, 'value', None):
-                tr.RETS = return_node.value
+                tr.RETS = anyret
                 tr.RETS_SOLU = tr.RETS.visit(NameReplacer(r'(.+)', r'\1_s'))
                 tc = tc.visit(self.if_repl('RETBLOCK', True))
-                tc = tc.visit(self.assert_repl('RET', tr.RETS, tr.RETS_SOLU))
+                tc = tc.visit(self.comp_repl('RET', tr.RETS, tr.RETS_SOLU))
             else:
                 tc = tc.visit(self.if_repl('RETBLOCK', False))
 
-            for f in fields(tr):
-                if value := getattr(tr, f.name):
-                    tc = m.replace(tc, Name(f.name), value)
+            for field in fields(tr):
+                if value := getattr(tr, field.name):
+                    tc = m.replace(tc, Name(field.name), value)
             output.append(tc)
 
         return FlattenSentinel(output)
@@ -95,35 +96,38 @@ class TestFuncsCreator(TestTransformer):
             def leave_If(self, original_node: "If", updated_node: "If"):
                 if m.matches(original_node.test, tocollaps):
                     return FlattenSentinel(updated_node.body.body)
-                elif m.matches(original_node.test, toremove):
+                if m.matches(original_node.test, toremove):
                     return RemovalSentinel.REMOVE
                 return updated_node
         return IfCollapser()
 
     @staticmethod
-    def assert_repl(key, names, names_s):
-        """replaces the assert compare(name, name_s)"""
+    def comp_repl(key: str, names: str, names_s: str):
+        """replaces the compare(name, name_s)"""
 
-        class AssertCompare(CSTTransformer):
-            def leave_Assert(self, orig_assert: Assert, upd_assert: Assert
-                             ) -> Union[Assert, FlattenSentinel[Assert],
-                                        RemovalSentinel]:
-                if not m.findall(orig_assert, m.Name(key)):
-                    return upd_assert
-                key_s = f'{key}_SOLU'
-                upd = upd_assert
+        key_s = f'{key}_SOLU'
+
+        class ComparreTrans(CSTTransformer):
+
+            def leave_Expr(self, orig_expr: Expr, upd_expr: Expr) -> Call:
+
+                if not m.matches(orig_expr.value,
+                                 m.Call(m.Name('compare'),
+                                        [m.Arg(m.Name(key)),
+                                         m.Arg(m.Name(key_s))])):
+                    return upd_expr
+
                 if m.matches(names, m.Name()):
                     iterator = [(names, names_s)]
-
                 elif m.matches(names, m.Tuple()):
                     iterator = zip(*map(elem_iter, [names, names_s]))
 
-                upd = FlattenSentinel([upd
-                                       .visit(NameReplacer(key, arg))
-                                       .visit(NameReplacer(key_s, arg_s))
-                                       for (arg, arg_s) in iterator])
-                return upd
-        return AssertCompare()
+                upd_expr = FlattenSentinel([upd_expr
+                                            .visit(NameReplacer(key, arg))
+                                            .visit(NameReplacer(key_s, arg_s))
+                                            for (arg, arg_s) in iterator])
+                return upd_expr
+        return ComparreTrans()
 
 
 class PASSWORDReplacer(MetaTransformer, Passworddiffer):

@@ -1,5 +1,5 @@
 from pathlib import Path
-from shutil import rmtree, copy, copytree
+from shutil import rmtree, copy, copytree, make_archive
 from typing import Optional
 from subprocess import Popen, PIPE
 import re
@@ -60,10 +60,13 @@ class HWGenerator:
         self.clean_output_folders()
         self.create_handout()
         self.create_lf_and_latex()
+
         self.create_grader()
+        self.obfuscate_solutions()
         self.wait_for_data_collection()
         self.add_test_data()
         self.perform_final_control()
+        self.zip()
 
     def create_handout(self):
         logger.info('Creating handout folder')
@@ -85,7 +88,6 @@ class HWGenerator:
                 test = get_ho_test(module, self.testtemplate)
                 tname = f"test_{module.path.name}"
                 self.ho_test_dir.joinpath(tname).write_text(test)
-        # obfuscate_solution(self.ho_solu_dir)
 
     def create_lf_and_latex(self):
         logger.info('Creating LF folder')
@@ -99,6 +101,10 @@ class HWGenerator:
                 fpath = self.latex_dir.joinpath(relpath)
                 fpath.parent.mkdir(parents=True, exist_ok=True)
                 fpath.write_text(value)
+
+    def zip(self):
+        for dir in [self.ho_proj_dir, self.lf_proj_dir, self.gr_proj_dir]:
+            make_archive(dir, 'zip', dir)
 
     def create_grader(self):
         copytree(self.ho_proj_dir, self.gr_proj_dir)
@@ -127,6 +133,10 @@ class HWGenerator:
         self.ho_test_dir.joinpath('data').mkdir()
         self.ho_solu_dir.joinpath('__init__.py').touch()
         self.ho_code_dir.joinpath('__init__.py').touch()
+
+    def obfuscate_solutions(self):
+        for solupath in (self.ho_solu_dir, self.lf_solu_dir):
+            obfuscate_solution(solupath)
 
     def copy_proj_files(self):
         def from_proj(path: Path):

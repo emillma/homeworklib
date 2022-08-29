@@ -6,10 +6,6 @@ import pickle
 import pytest
 from pathlib import Path
 
-# pytest_plugins = [
-#     "tests.unit.fixtures.some_stuff",
-# ]
-
 if os.getenv('_PYTEST_RAISE', "0") != "0":
     """Hack to let the debugger in vscode catch the assert statements"""
     @pytest.hookimpl(tryfirst=True)

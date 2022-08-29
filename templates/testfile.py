@@ -32,13 +32,13 @@ class TESTCLASS:
 
                 MODULE.FUNCTION(ARGS)
 
-            assert compare(ARG, ARG_SOLU)
+            compare(ARG, ARG_SOLU)
             if RETBLOCK:
 
                 RETS = ret
                 RETS_SOLU = ret_s
 
-                assert compare(RET, RET_SOLU)
+                compare(RET, RET_SOLU)
 
     def test_solution_usage(self, test_data):
         """Tests if the solution is used in the function"""

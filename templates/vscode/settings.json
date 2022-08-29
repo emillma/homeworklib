@@ -4,24 +4,12 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    // "files.exclude": {
-    //     "**/__pycache__": true,
-    //     "**/.pytest_cache": true,
-    //     "tests/conftest.py": true
-    // },
-    // "python.linting.flake8Enabled": false,
-    // "python.linting.pylintEnabled": true,
-    // "python.linting.enabled": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+    },
     "python.analysis.extraPaths": [
         "CODEDIR"
     ],
-    "files.exclude": {
-        "**/__pycache__/": true,
-        // "*.egg-info": true
-    },
     "testing.automaticallyOpenPeekView": "never"
-    // "editor.codeLens": false,
-    // "python.linting.pylintArgs": [
-    //     "--disable=missing-docstring,import-error,wrong-import-position",
-    // ]
 }
