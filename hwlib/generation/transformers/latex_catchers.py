@@ -1,4 +1,3 @@
-from ..utils.metamodule import MetaModule
 from ..utils.metatraversers import MetaTransformer
 from libcst import FunctionDef
 import re
@@ -22,14 +21,16 @@ class LatexFuncDefCatcher(MetaTransformer):
             relpath = Path(*key.split('.'))
 
             body = self.module.code_for_node(upd_fdef)
-            body = re.match('^\n*(.*?)\n*$', body, re.DOTALL)[1]
-            fdef = re.search('def [^\(]+', body)
+            body = re.match('^\n*(.*?)\n*$', body, re.DOTALL)[1]  # newlines
+            if docstr := upd_fdef.get_docstring(clean=False):
+                doc_fixed = re.sub('(?<=\\n) {5,}', ' '*4, docstr)
+                body = body.replace(docstr, doc_fixed, 1)
 
-            latex_body = ('\\begin{minted}{python}\n'
+            latex_body = ('\\begin{pythoncode}\n'
                           f'{body}\n'
-                          '\\end{minted}')
+                          '\\end{pythoncode}')
 
-            latex_fdef = (f'\\mintinline{{python}}{{{fdef}}}')
+            latex_fdef = f'\\pythoninline{{{self.id_str(orig_fdef)}}}\\unskip'
 
             self.add_latex_file(relpath.joinpath('solu.tex'), latex_body)
             self.add_latex_file(relpath.joinpath('def.tex'), latex_fdef)

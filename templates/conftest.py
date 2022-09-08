@@ -17,7 +17,7 @@ if os.getenv('_PYTEST_RAISE', "0") != "0":
         raise excinfo.value
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def test_data():
     pdata = Path(__file__).parent.joinpath("data/testdata.pickle")
     with open(pdata, 'rb') as file:

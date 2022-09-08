@@ -100,7 +100,7 @@ class MetaModule:
     def children(node: CSTNode, limit: int = 1) -> Iterable[CSTNode]:
         return children(node, limit)
 
-    def parent(self, node: CSTNode, *, step: int = 1) -> CSTNode:
+    def parent(self, node: CSTNode, step: int = 1) -> CSTNode:
         if step == 1:
             return self.parent_prov[node]
         else:

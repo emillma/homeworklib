@@ -1,5 +1,5 @@
 from pathlib import Path
-from shutil import rmtree, copy
+from shutil import rmtree, copy, make_archive
 import re
 
 project_dir = Path(__file__).parent
@@ -28,6 +28,7 @@ def create_handin():
             newpath = handin_dir.joinpath(rel2project)
             newpath.parent.mkdir(parents=True, exist_ok=True)
             copy(str(file), str(newpath))
+    make_archive(handin_dir, 'zip', handin_dir)
 
 
 if __name__ == '__main__':

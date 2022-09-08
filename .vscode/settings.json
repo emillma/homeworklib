@@ -53,5 +53,10 @@
         "**/__pycache__/": true,
         "*.egg-info": true,
         ".pytest_cache": true
-    }
+    },
+    "python.testing.pytestArgs": [
+        "output"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

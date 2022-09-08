@@ -2,26 +2,26 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: run homework",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/CODEDIR/main.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
+            "console": "integratedTerminal"
         },
-        // {
-        //     "name": "Python: run homework",
-        //     "type": "python",
-        //     "request": "launch",
-        //     "program": "${workspaceFolder}/$homework_module/run.py",
-        //     "console": "integratedTerminal"
-        // },
-        // {
-        //     "name": "Python: generate handin zip",
-        //     "type": "python",
-        //     "request": "launch",
-        //     "program": "${workspaceFolder}/generate_handin.py",
-        //     "console": "integratedTerminal"
-        // },
+        {
+            "name": "Python: create handin zip",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/create_handin.py",
+            "console": "integratedTerminal"
+        },
         {
             "name": "Debug Tests",
             "type": "python",

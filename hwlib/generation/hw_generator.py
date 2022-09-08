@@ -65,8 +65,8 @@ class HWGenerator:
         self.obfuscate_solutions()
         self.wait_for_data_collection()
         self.add_test_data()
-        self.perform_final_control()
         self.zip()
+        self.perform_final_control()
 
     def create_handout(self):
         logger.info('Creating handout folder')
@@ -157,7 +157,7 @@ class HWGenerator:
                 raise Exception
 
         from_tpl('vscode', self.ho_proj_dir.joinpath('.vscode'))
-        from_tpl('devcontainer', self.ho_proj_dir.joinpath('.devcontainer'))
+        # from_tpl('devcontainer', self.ho_proj_dir.joinpath('.devcontainer'))
         from_tpl('compare.py', self.ho_test_dir)
         from_tpl('conftest.py', self.ho_test_dir)
         from_tpl('create_handin.py', self.ho_proj_dir)

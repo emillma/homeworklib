@@ -5,21 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: eskf",
-            "type": "python",
-            "request": "launch",
-            "program": "testproject/eskf/run.py",
-            "console": "integratedTerminal",
-            // "justMyCode": false
-        },
-        {
             "name": "Python: test_handoutgen",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2",
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2/src/run.py",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf/src/main.py",
                 "output",
                 "--rm"
             ],
@@ -42,7 +34,7 @@
             "name": "Python: datacatchtest",
             "type": "python",
             "request": "launch",
-            "program": "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2/src/run.py",
+            "program": "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment2/src/main.py",
             "env": {
                 "HWLIB_CATCH_FILE": "${workspaceFolder}/output/testfile.pickle"
             },

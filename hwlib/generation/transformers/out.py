@@ -29,7 +29,10 @@ class CodeRemover(MetaTransformer):
                 return any(self.qname_matches(node, kw) for kw in keywordset)
             return any(map(haskeyword, self.children(node, limit=2)))
 
-        for orig_line in node.body:
+        check = m.matches(node.body[0],
+                          m.SimpleStatementLine([m.Expr(m.SimpleString())]))
+        assert check, "Expected first line of task to be a docsstring"
+        for orig_line in node.body[1:]:
             if m.matches(orig_line, m.SimpleStatementLine([m.Return()])):
                 continue
             elif keyword_in_close_children(orig_line):
