@@ -5,16 +5,18 @@ import numpy as np
 
 
 def compare(a, b):
-    if isinstance(b, (np.ndarray, numbers.Number)):
-        assert np.allclose(a, b, atol=1e-6)
 
-    elif is_dataclass(b):
+    if is_dataclass(b):
         assert type(a).__name__ == type(b).__name__
         if isinstance(b, type):
             assert fields(a) == fields(b)
         else:
-            for i, j in zip(astuple(a), astuple(b)):
+            for field in fields(b):
+                i, j = getattr(a, field.name), getattr(b, field.name)
                 compare(i, j)
+
+    elif isinstance(b, (np.ndarray, numbers.Number)):
+        assert np.allclose(a, b, atol=1e-6)
 
     elif isinstance(b, Iterable):
         for i, j in zip(a, b):
