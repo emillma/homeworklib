@@ -23,6 +23,8 @@ class RedirectImports(MetaTransformer):
 
     def leave_ImportFrom(self, orig_ifrom: ImportFrom, upd_ifrom: ImportFrom
                          ) -> ImportFrom:
+        if orig_ifrom.relative:
+            return upd_ifrom
         module_name = self.code(orig_ifrom.module)
         if not orig_ifrom.relative and module_name in self.siblings:
             return upd_ifrom.with_changes(module=Attribute(Name('solution'),

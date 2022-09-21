@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf",
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf/src/main.py",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment4",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment4/src/main.py",
                 "output",
                 "--rm"
             ],

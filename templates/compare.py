@@ -5,8 +5,9 @@ import numpy as np
 
 
 def compare(a, b):
-
-    if is_dataclass(b):
+    if a is b:
+        return
+    elif is_dataclass(b):
         assert type(a).__name__ == type(b).__name__
         if isinstance(b, type):
             assert fields(a) == fields(b)
