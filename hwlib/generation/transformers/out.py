@@ -75,7 +75,7 @@ class SolutionBeforeReturnAdder(MetaTransformer):
                 callline = SimpleStatementLine(
                     leading_lines=[EmptyLine(),
                                    EmptyLine(comment=Comment(
-                                       "# TODO replace this with own code"))],
+                                       "# TODO remove this"))],
                     body=body)
 
                 newbody.append(callline)
