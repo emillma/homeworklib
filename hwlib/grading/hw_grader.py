@@ -1,5 +1,5 @@
 from pathlib import Path
-from shutil import rmtree, copy, copytree
+from shutil import rmtree, copy, copytree, unpack_archive
 from .utils import parse_junit_xml, get_results_array
 from multiprocessing import Pool, current_process, cpu_count
 import subprocess
@@ -9,6 +9,7 @@ from typing import Tuple
 from hwlib.config import DEBUG
 import filecmp
 import re
+import logging
 
 
 class HWGrader:
@@ -18,33 +19,52 @@ class HWGrader:
 
         self.work_dir = self.handins_dir.joinpath('_tmp_work')
         self.report_dir = self.work_dir.joinpath('reports')
-        self.handins = sorted(list(p for p in self.handins_dir.iterdir()
-                                   if p.name != '_tmp_work'))
+        self.handins_unziped = self.handins_dir.joinpath('_unziped')
+
+        pat = r'Name: (.*) \((.*)\)'
+        self.name_dict = {m[2]: m[1]
+                          for m in (re.match(pat, p.read_text())
+                                    for p in self.handins_dir.glob('*.txt'))}
 
     def call(self):
         self.cleanup()
         self.makedirs()
+        self.unzip()
 
-        args = zip(self.handins[:10],
+        handins = sorted(list(self.handins_unziped.iterdir()))
+        args = zip(handins,
                    repeat(self.work_dir),
                    repeat(self.grader_dir))
 
         p = Pool(cpu_count())
-        chunksize = (len(self.handins)-1)//cpu_count() + 1
+        chunksize = (len(handins)-1)//cpu_count() + 1
         resiter = p.imap(self.grade, args, chunksize)
         # resiter = map(self.grade, args)
         results = dict(resiter)
 
-        res_arr = get_results_array(results)
+        res_arr = get_results_array(results, self.name_dict)
         csvtext = '\n'.join(','.join(ln) for ln in res_arr)
         resname = re.sub('^GR', 'results', f'{self.grader_dir.name}.csv')
         self.handins_dir.joinpath(resname).write_text(csvtext)
         self.cleanup()
         return res_arr
 
+    def get_names(self):
+        pat = r'Name: (.*) \((.*)\)'
+        return {m[1]: m[2]
+                for m in (re.match(pat, p.read_text())
+                          for p in self.handins_dir.glob('*.txt'))}
+
     def makedirs(self):
-        for dir in (self.work_dir, self.handins_dir, self.report_dir):
+        for dir in (self.work_dir, self.report_dir, self.handins_unziped):
             dir.mkdir(parents=True, exist_ok=True)
+
+    def unzip(self):
+        for handin in self.handins_dir.glob('*.zip'):
+            key = re.search(r'_(.*?)_attempt_', handin.name)[1]
+            outdir = self.handins_unziped / key
+            if not outdir.is_dir():
+                unpack_archive(handin, outdir)
 
     def cleanup(self):
         if self.work_dir.is_dir():
@@ -58,16 +78,23 @@ class HWGrader:
         if not process_dir.is_dir():
             copytree(gr_dir, process_dir)
 
-        HWGrader.insert_handin_files(handin_dir, process_dir)
-        subprocess.run(['pytest',
-                        str(process_dir),
-                        '--capture=no',
-                        '--tb=no',
-                        # '--continue-on-collection-errors',
-                        f'--junitxml={junit_file}'],
-                       stdout=open(os.devnull, 'w'),
-                       stderr=open(os.devnull, 'w'))
-        results = parse_junit_xml(junit_file)
+        try:
+            HWGrader.insert_handin_files(handin_dir, process_dir)
+
+            subprocess.run(['pytest',
+                            str(process_dir),
+                            '--capture=no',
+                            '--tb=no',
+                            # '--continue-on-collection-errors',
+                            f'--junitxml={junit_file}'],
+                           stdout=open(os.devnull, 'w'),
+                           stderr=open(os.devnull, 'w'))
+            results = parse_junit_xml(junit_file)
+
+        except NotImplementedError:
+            logging.error(
+                f"Could not insert handin files for {handin_dir.name}")
+            results = dict()
 
         HWGrader.restore_files(process_dir, gr_dir)
 

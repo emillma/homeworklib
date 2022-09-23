@@ -185,7 +185,7 @@ class HWGenerator:
     def add_test_data(self):
         logger.info('Adding test data')
         for dir in (self.ho_test_dir, self.lf_test_dir, self.gr_test_dir):
-            copy(self.tmp_test_data, dir.joinpath('data/testdata.pickle'))
+            copy(self.tmp_test_data, dir / 'data/testdata.pickle')
         self.tmp_test_data.unlink()
 
     def perform_final_control(self):

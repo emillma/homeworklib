@@ -51,34 +51,39 @@ def split_name(name: str):
     return [module, clsname, fname]
 
 
-def get_results_array(test_results: dict[str, dict[str, str]]) -> str:
-    names = set()
+def get_results_array(test_results: dict[str, dict[str, str]],
+                      name_dict: dict[str, str]) -> str:
+    stud_ids = set()
     test_results = sorted([i for i in test_results.items()],
                           key=lambda n: n[0])
-    for name, results in test_results:
-        names.update(results.keys())
-    names = sorted(names)
+    for stud_id, results in test_results:
+        stud_ids.update(results.keys())
+    stud_ids = sorted(stud_ids)
 
-    shape = len(test_results)+4, len(names)+2
+    shape = len(test_results)+4, len(stud_ids)+4
     res_arr = np.full(shape, '', dtype=object)
 
-    res_arr[:3, 2:] = np.array([split_name(n) for n in names], dtype=object).T
-    res_arr[3, :2] = ['name', 'total']
+    res_arr[:3, 4:] = np.array([split_name(n) for n in stud_ids],
+                               dtype=object).T
+    res_arr[3, :4] = ['last name', 'name', 'stud id', 'total']
 
-    grade_part = res_arr[4:, 2:]
-    namepart = res_arr[4:, 0]
+    grade_part = res_arr[4:, 4:]
+    namepart = res_arr[4:, :3]
 
-    total_per_hin = res_arr[4:, 1]
-    total_per_task = res_arr[3, 2:]
+    total_per_hin = res_arr[4:, 3]
+    total_per_task = res_arr[3, 4:]
 
-    idxdict = dict((name, i) for (i, name) in enumerate(names))
-    for i, (name, results) in enumerate(test_results):
-        namepart[i] = name
-        idxs = [idxdict[name] for name in results.keys()]
-        grade_part[i][idxs] = np.array(tuple(results.values()))
-
+    idxdict = dict((name, i) for (i, name) in enumerate(stud_ids))
+    for i, (stud_id, results) in enumerate(test_results):
+        name = name_dict[stud_id].split(' ')
+        namepart[i] = name[-1], ' '.join(name[:-1]), stud_id
+        if results is not None:
+            idxs = [idxdict[name] for name in results.keys()]
+            grade_part[i][idxs] = np.array(tuple(results.values()))
+        else:
+            grade_part[i][0] = 'wrong handin'
     passed = grade_part == 'PP'
-    total_per_hin[:] = [f'{p}/{len(names)}' for p in np.sum(passed, axis=1)]
+    total_per_hin[:] = [f'{p}/{len(stud_ids)}' for p in np.sum(passed, axis=1)]
     total_per_task[:] = [f'{p}/{len(test_results)}'
                          for p in np.sum(passed, axis=0)]
 
