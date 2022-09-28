@@ -33,9 +33,9 @@ ho_sup = (*general,
           REPLACEReplacer.ishomework(True),
           TOASSIGNReplacer.ishomework(True)
           )
-ho__task = (*ho_sup,
+ho__task = (CodeRemover,
+            *ho_sup,
             ImportSolution,
-            CodeRemover,
             SolutionBeforeReturnAdder,
             )
 ho__solu = (*general,
@@ -72,18 +72,22 @@ gr__check = (PASSWORDReplacer.with_password(PASSWORD),)
 
 
 def get_ho_sup(module) -> str:
+    """For handout files without tasks"""
     return process_composition(module, ho_sup)
 
 
 def get_ho_task(module) -> str:
+    """For handout files with tasks"""
     return process_composition(module, ho__task)
 
 
 def get_ho_solu(module) -> str:
+    """For all handout files as well as solution files"""
     return process_composition(module, ho__solu)
 
 
 def get_ho_usage_checker(module) -> str:
+    """"""
     return process_composition(module, ho__check)
 
 

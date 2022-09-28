@@ -24,10 +24,10 @@ class CodeRemover(MetaTransformer):
         if not self.parent(node) in self.task_funcs:
             return
 
-        def keyword_in_close_children(node):
+        def keyword_in_all_children(node):
             def haskeyword(node):
                 return any(self.qname_matches(node, kw) for kw in keywordset)
-            return any(map(haskeyword, self.children(node, limit=2)))
+            return any(map(haskeyword, [node, *self.children(node, limit=-1)]))
 
         check = m.matches(node.body[0],
                           m.SimpleStatementLine([m.Expr(m.SimpleString())]))
@@ -35,7 +35,7 @@ class CodeRemover(MetaTransformer):
         for orig_line in node.body[1:]:
             if m.matches(orig_line, m.SimpleStatementLine([m.Return()])):
                 continue
-            elif keyword_in_close_children(orig_line):
+            elif keyword_in_all_children(orig_line):
                 continue
             else:
                 self.skipset.add(orig_line)
