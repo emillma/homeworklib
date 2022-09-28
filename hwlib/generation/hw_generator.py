@@ -3,6 +3,7 @@ from shutil import rmtree, copy, copytree, make_archive
 from typing import Optional
 from subprocess import Popen, PIPE
 import re
+from collections import Counter
 
 from .transformers import (get_ho_sup, get_ho_task, get_ho_solu,
                            get_ho_test, get_ho_usage_checker,
@@ -191,4 +192,5 @@ class HWGenerator:
     def perform_final_control(self):
         logger.info('Performing Final Control')
         res_arr = final_control(self.output_dir, self.gr_proj_dir)
-        logger.info(res_arr[4:7, :2])
+        for i in range(4, 7):
+            logger.info(f'{res_arr[i, 2]}: {Counter(res_arr[i, 4:])}')

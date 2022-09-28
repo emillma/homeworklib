@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf",
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf/src/main.py",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment5",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment5/src/main.py",
                 "/workspaces/vitass/workdir/output",
                 "--rm"
             ],
@@ -34,7 +34,7 @@
             "name": "Python: datacatchtest",
             "type": "python",
             "request": "launch",
-            "program": "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment3_ekf/src/main.py",
+            "program": "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment5/src/main.py",
             "env": {
                 "HWLIB_CATCH_FILE": "/workspaces/vitass/workdir/output/testfile.pickle"
             },

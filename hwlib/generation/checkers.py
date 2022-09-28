@@ -72,16 +72,20 @@ def final_control(directory: Path, grader_dir: Path) -> None:
     control_dir = directory.joinpath('control')
     if control_dir.is_dir():
         rmtree(control_dir)
-    directory.joinpath('control').mkdir()
+    control_dir.mkdir()
 
     for part_dir in directory.iterdir():
         if not part_dir.is_dir():
             continue
         if make_handin_script := next(part_dir.glob('create_handin.py'), None):
             subprocess.run([sys.executable, str(make_handin_script)])
-            handin_dir = part_dir.joinpath('handin')
-            dirname = f"handin_{part_dir.name}"
-            handin_dir.rename(directory.joinpath('control').joinpath(dirname))
+            handin_dir = part_dir.joinpath('handin.zip')
 
+            name = f"{part_dir.name.replace('_','')}"
+            fname = f"Assignment 1_{name}_attempt_1"
+            handin_dir.rename(control_dir.joinpath(fname).with_suffix('.zip'))
+
+            infofile = control_dir.joinpath(fname).with_suffix('.txt')
+            infofile.write_text(f'Name: Some Name ({name})')
     res = HWGrader(control_dir, grader_dir).call()
     return res
