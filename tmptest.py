@@ -21,7 +21,7 @@ arg = space
 step = 1
 
 N = 2000000
-t0 = perf_counter()
+t0 = perf_counter() 
 for n in range(space, N):
     if np.all([i % step == 0 for i in data]):
         step *= 2
