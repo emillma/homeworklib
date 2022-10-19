@@ -74,6 +74,7 @@ class HWGenerator:
         self.create_ho_folder_structure()
         self.copy_template_files()
         self.modify_template_files()
+        self.copy_proj_files()
         checker = get_ho_usage_checker(self.solu_checker)
         self.ho_solu_dir.joinpath('solu_usage_checker.py').write_text(checker)
         for module in self.modules:
@@ -140,9 +141,16 @@ class HWGenerator:
             obfuscate_solution(solupath)
 
     def copy_proj_files(self):
-        def from_proj(path: Path):
-            newpath = self.proj_dir.joinpath(path.relative_to(self.proj_dir))
-            copy(path, newpath)
+        def copy_from_proj(path: Path):
+            frompath = self.proj_dir.joinpath(path)
+            newpath = self.ho_proj_dir.joinpath(path)
+            if frompath.is_dir():
+                copytree(frompath, newpath, dirs_exist_ok=True)
+            elif frompath.is_file():
+                copy(frompath, newpath)
+            else:
+                raise ValueError(f'Path {path} is neither file nor dir')
+        copy_from_proj('data')
 
     def copy_template_files(self):
 
@@ -166,10 +174,13 @@ class HWGenerator:
     def modify_template_files(self):
         replacements = {'CODEDIR': self.code_dir.name}
         for file in [f for f in self.ho_proj_dir.rglob('*') if f.is_file()]:
-            text = file.read_text()
-            for pattern, repl in replacements.items():
-                text = re.sub(pattern, repl, text)
-            file.write_text(text)
+            try:
+                text = file.read_text()
+                for pattern, repl in replacements.items():
+                    text = re.sub(pattern, repl, text)
+                file.write_text(text)
+            except UnicodeDecodeError:
+                pass
 
     def start_data_collection(self, outfile):
         logger.info('Starting data collection')
