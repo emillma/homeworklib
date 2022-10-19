@@ -19,12 +19,12 @@ def compare(a, b):
     elif isinstance(b, (np.ndarray, numbers.Number)):
         assert np.allclose(a, b, atol=1e-6)
 
+    elif isinstance(b, str):
+        assert a == b
+
     elif isinstance(b, Iterable):
         for i, j in zip(a, b):
             compare(i, j)
-
-    elif isinstance(b, str):
-        assert a == b
 
     else:
         raise NotImplementedError(f'{type(b)} not implemented')
