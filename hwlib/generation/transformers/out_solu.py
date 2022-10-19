@@ -44,7 +44,7 @@ class KEEPReplacer(MetaTransformer):
     def leave_Call(self, original_node: "Call", updated_node: "Call"
                    ) -> "BaseExpression":
         if self.qname_matches(original_node.func, KEEP):
-            updated_node = original_node.args[0]
+            updated_node = original_node.args[0].value
         return updated_node
 
     def leave_If(self, original_node: "If", updated_node: "If"
@@ -85,7 +85,7 @@ class TOASSIGNReplacer(MetaTransformer, HomeworkDiffer):
                     original_node, m.SimpleStatementLine()))
                 updated_node = Name('None')
             else:
-                updated_node = original_node.args[0]
+                updated_node = original_node.args[0].value
         return updated_node
 
     def leave_If(self, original_node: "If", updated_node: "If"
@@ -106,7 +106,7 @@ class REPLACEReplacer(MetaTransformer, HomeworkDiffer):
     def leave_Call(self, original_node: "Call", updated_node: "Call"
                    ) -> "BaseExpression":
         if self.qname_matches(original_node.func, REPLACE):
-            updated_node = original_node.args[1 if self.homework else 0]
+            updated_node = original_node.args[1 if self.homework else 0].value
         return updated_node
 
     def leave_If(self, original_node: "If", updated_node: "If"
