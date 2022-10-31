@@ -28,6 +28,7 @@ class TESTCLASS:
             if RETBLOCK:
 
                 ret = MODULE.FUNCTION(ARGS)
+                ret_s = MODULE.FUNCTION(ARGS_SOLU)
             if NORETBLOCK:
 
                 MODULE.FUNCTION(ARGS)
