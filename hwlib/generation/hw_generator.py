@@ -14,6 +14,7 @@ from .checkers import pre_check_mmodule, final_control
 from .utils import MetaModule, NameReplacer
 from hwlib.logger import logger
 from .obfuscate import obfuscate_solution
+import logging
 
 
 class HWGenerator:
@@ -149,7 +150,8 @@ class HWGenerator:
             elif frompath.is_file():
                 copy(frompath, newpath)
             else:
-                raise ValueError(f'Path {path} is neither file nor dir')
+                logging.info(f'Could not copy {frompath}')
+
         copy_from_proj('data')
 
     def copy_template_files(self):

@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/graded1",
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/graded1/src/main.py",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment5",
+                "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment5/src/main.py",
                 "/workspaces/vitass/workdir/output",
                 "--rm"
             ],
@@ -24,8 +24,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/grade.py",
             "args": [
-                "/workspaces/vitass/workdir/assignment3_handins",
-                "/workspaces/vitass/workdir/output/assignment3_ekf/GR_assignment3_ekf",
+                "/workspaces/vitass/workdir/assignment5_handin",
+                "/workspaces/vitass/workdir/output/assignment5/GR_assignment5",
             ],
             "console": "integratedTerminal",
             // "justMyCode": false

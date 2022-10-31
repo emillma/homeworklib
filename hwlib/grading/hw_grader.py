@@ -21,6 +21,9 @@ class HWGrader:
         self.report_dir = self.work_dir.joinpath('reports')
         self.handins_unziped = self.handins_dir.joinpath('_unziped')
 
+        self._failed = self.handins_dir.joinpath('_failed')
+        self._failed.mkdir(parents=True, exist_ok=True)
+
         pat = r'Name: (.*) \((.*)\)'
         self.name_dict = {m[2]: m[1]
                           for m in (re.match(pat, p.read_text())
@@ -38,8 +41,8 @@ class HWGrader:
 
         p = Pool(cpu_count())
         chunksize = (len(handins)-1)//cpu_count() + 1
-        resiter = p.imap(self.grade, args, chunksize)
-        # resiter = map(self.grade, args)
+        # resiter = p.imap(self.grade, args, chunksize)
+        resiter = map(self.grade, args)
         results = dict(resiter)
 
         res_arr = get_results_array(results, self.name_dict)
@@ -90,7 +93,9 @@ class HWGrader:
                            stdout=open(os.devnull, 'w'),
                            stderr=open(os.devnull, 'w'))
             results = parse_junit_xml(junit_file)
-
+            if not results or not all([r == 'PP' for r in results.values()]):
+                copytree(process_dir,
+                         handin_dir.parents[1] / '_failed' / handin_dir.name)
         except NotImplementedError:
             logging.error(
                 f"Could not insert handin files for {handin_dir.name}")
