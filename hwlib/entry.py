@@ -34,7 +34,7 @@ def generate_homework():
     assert module_dir.is_dir()
     assert runfile.is_file()
     if not output_dir.is_dir():
-        output_dir.mkdir()
+        output_dir.mkdir(parents=True, exist_ok=True)
 
     HWGenerator(module_dir, runfile, output_dir, template_dir).call()
 

@@ -94,8 +94,11 @@ class HWGrader:
                            stderr=open(os.devnull, 'w'))
             results = parse_junit_xml(junit_file)
             if not results or not all([r == 'PP' for r in results.values()]):
-                copytree(process_dir,
-                         handin_dir.parents[1] / '_failed' / handin_dir.name)
+                out = handin_dir.parents[1] / '_failed' / handin_dir.name
+                if out.exists():
+                    rmtree(out)
+                copytree(process_dir,out)
+                         
         except NotImplementedError:
             logging.error(
                 f"Could not insert handin files for {handin_dir.name}")

@@ -5,34 +5,42 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
             "name": "Python: test_handoutgen",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/generate.py",
             "args": [
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/graded2",
-                "/workspaces/vitass/TTK4250Exercises/assignments_code/graded2/src/run_simulated_SLAM.py",
-                "/workspaces/vitass/workdir/output",
+                "examples/example1",
+                "examples/example1/src/run.py",
+                "output",
                 "--rm"
             ],
             "console": "integratedTerminal",
-            // "justMyCode": alse
+            "justMyCode": false
         },
         {
             "name": "Python: test_grader",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/hwlib/grade.py",
             "args": [
-                "/workspaces/vitass/workdir/assignment5_handin",
-                "/workspaces/vitass/workdir/output/assignment5/GR_assignment5",
+                "output/example1/control",
+                "output/example1/GR_example1",
             ],
             "console": "integratedTerminal",
             // "justMyCode": false
         },
         {
             "name": "Python: datacatchtest",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "/workspaces/vitass/TTK4250Exercises/assignments_code/assignment5/src/main.py",
             "env": {

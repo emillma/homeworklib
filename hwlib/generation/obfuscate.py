@@ -5,7 +5,8 @@ import subprocess
 
 def obfuscate_solution(folder: Path):
     from pyarmor.pyarmor import main as call_pyarmor
-    folder_tmp = folder.rename(f"{folder}_tmp")
+    tmp = folder.parent/'tmp'
+    shutil.move(folder, tmp/folder.name)
     platforms = [
         'windows.x86',
         'windows.x86_64',
@@ -15,8 +16,8 @@ def obfuscate_solution(folder: Path):
         # 'darwin.aarch64'
         # 'darwin.x86_64'
         # "linux.arm",
-        "linux.aarch32",
-        "linux.aarch64",
+        # "linux.aarch32",
+        # "linux.aarch64",
         #  "vs2015.x86",
         #  "vs2015.x86_64",
         #  "linux.armv6",
@@ -36,10 +37,8 @@ def obfuscate_solution(folder: Path):
         #  "poky.x86"
     ]
     platcmd = [item for plat in platforms for item in ['--platform', plat]]
-    output = str(folder)
-    target = str(folder_tmp.joinpath('__init__.py'))
-    subprocess.run(['pyarmor', 'obfuscate', '--recursive',
+    subprocess.run(['pyarmor', 'gen', '--recursive',
                     *platcmd,
-                    '--output', output,
-                    target])
-    shutil.rmtree(folder_tmp)
+                    '--output', str(folder),
+                    str(tmp/folder.name/'__init__.py')], check=True)
+    shutil.rmtree(tmp)
